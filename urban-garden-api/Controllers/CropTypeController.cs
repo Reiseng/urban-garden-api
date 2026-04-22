@@ -10,13 +10,13 @@ namespace UrbanGarden.Api.Controllers
     /// </summary>
     [ApiController]
     [Route("api/{version}/[controller]")]
-    public class CultiveController : ControllerBase
+    public class CropTypeController : ControllerBase
     {
-        private readonly ICultiveService _cultiveService;
+        private readonly ICropTypeService _cropTypeService;
 
-        public CultiveController(ICultiveService cultiveService)
+        public CropTypeController(ICropTypeService cropTypeService)
         {
-            _cultiveService = cultiveService;
+            _cropTypeService = cropTypeService;
         }
 
         /// <summary>
@@ -24,10 +24,10 @@ namespace UrbanGarden.Api.Controllers
         /// </summary>
         /// <returns>Lista de cultivos en formato DTO.</returns>
         [HttpGet]
-        public ActionResult<IEnumerable<CultiveDto>> GetAll()
+        public ActionResult<IEnumerable<CropTypeDto>> GetAll()
         {
-            var cultives = _cultiveService.GetAll();
-            var cultivesDto = cultives.Select(c => new CultiveDto
+            var cropTypes = _cropTypeService.GetAll();
+            var cropTypesDto = cropTypes.Select(c => new CropTypeDto
             {
                 ID = c.ID,
                 Name = c.Name,
@@ -35,7 +35,7 @@ namespace UrbanGarden.Api.Controllers
                 Disponible = c.Disponible
             }).ToList();
 
-            return Ok(cultivesDto);
+            return Ok(cropTypesDto);
         }
 
         /// <summary>
@@ -44,23 +44,23 @@ namespace UrbanGarden.Api.Controllers
         /// <param name="id">ID del cultivo a buscar.</param>
         /// <returns>El cultivo encontrado o 404 si no existe.</returns>
         [HttpGet("{id}")]
-        public ActionResult<CultiveDto> GetById(int id)
+        public ActionResult<CropTypeDto> GetById(int id)
         {
-            var cultive = _cultiveService.GetById(id);
-            if (cultive == null)
+            var cropType = _cropTypeService.GetById(id);
+            if (cropType == null)
             {
                 return NotFound();
             }
 
-            var cultiveDto = new CultiveDto
+            var cropTypeDto = new CropTypeDto
             {
-                ID = cultive.ID,
-                Name = cultive.Name,
-                Season = cultive.Season,
-                Disponible = cultive.Disponible
+                ID = cropType.ID,
+                Name = cropType.Name,
+                Season = cropType.Season,
+                Disponible = cropType.Disponible
             };
 
-            return Ok(cultiveDto);
+            return Ok(cropTypeDto);
         }
 
         /// <summary>
@@ -69,23 +69,23 @@ namespace UrbanGarden.Api.Controllers
         /// <param name="createDto">Datos del cultivo a crear.</param>
         /// <returns>El cultivo creado con su ID asignado.</returns>
         [HttpPost]
-        public ActionResult Create([FromBody] CultiveCreateDto createDto)
+        public ActionResult Create([FromBody] CreateCropTypeDto createDto)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var cultive = new Cultive
+            var cropType = new CropType
             {
                 Name = createDto.Name,
                 Season = createDto.Season,
                 Disponible = createDto.Disponible ?? true
             };
 
-            _cultiveService.Add(cultive);
+            _cropTypeService.Add(cropType);
 
-            return CreatedAtAction(nameof(GetById), new { version = RouteData.Values["version"], id = cultive.ID }, cultive);
+            return CreatedAtAction(nameof(GetById), new { version = RouteData.Values["version"], id = cropType.ID }, cropType);
         }
 
         /// <summary>
@@ -95,24 +95,24 @@ namespace UrbanGarden.Api.Controllers
         /// <param name="updateDto">Datos actualizados del cultivo.</param>
         /// <returns>204 No Content si se actualiza correctamente, o 404 si no existe.</returns>
         [HttpPut("{id}")]
-        public ActionResult Update(int id, [FromBody] CultiveDto updateDto)
+        public ActionResult Update(int id, [FromBody] CropTypeDto updateDto)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var existingCultive = _cultiveService.GetById(id);
-            if (existingCultive == null)
+            var existingCropType = _cropTypeService.GetById(id);
+            if (existingCropType == null)
             {
                 return NotFound();
             }
 
-            existingCultive.Name = updateDto.Name;
-            existingCultive.Season = updateDto.Season;
-            existingCultive.Disponible = updateDto.Disponible ?? existingCultive.Disponible;
+            existingCropType.Name = updateDto.Name;
+            existingCropType.Season = updateDto.Season;
+            existingCropType.Disponible = updateDto.Disponible ?? existingCropType.Disponible;
 
-            _cultiveService.Update(existingCultive);
+            _cropTypeService.Update(existingCropType);
 
             return NoContent();
         }
@@ -125,13 +125,13 @@ namespace UrbanGarden.Api.Controllers
         [HttpDelete("{id}")]
         public ActionResult Delete(int id)
         {
-            var existingCultive = _cultiveService.GetById(id);
-            if (existingCultive == null)
+            var existingCropType = _cropTypeService.GetById(id);
+            if (existingCropType == null)
             {
                 return NotFound();
             }
 
-            _cultiveService.Delete(id);
+            _cropTypeService.Delete(id);
 
             return NoContent();
         }

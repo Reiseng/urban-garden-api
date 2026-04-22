@@ -1,11 +1,10 @@
 namespace UrbanGarden.Api.Models.Enums
 {
-    public enum CultiveStatus
+    public enum CropStatus
     {
         Planted,
         Growing,
         ReadyForHarvest,
-        Harvested,
         Withered
     }
 }

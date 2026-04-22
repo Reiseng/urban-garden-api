@@ -4,19 +4,19 @@ using UrbanGarden.Api.Models.Entities;
 using UrbanGarden.Api.Models.Enums;
 using Moq;
 
-public class CultiveServiceTests
+public class CropTypeServiceTests
 {
 [Fact]
     public void GetAll_WhenEmpty_ReturnsEmptyList()
     {
 
-        var mockRepository = new Mock<ICultiveRepository>();
+        var mockRepository = new Mock<ICropTypeRepository>();
 
         mockRepository
             .Setup(r => r.GetAll())
-            .Returns(new List<Cultive>());
+            .Returns(new List<CropType>());
 
-        var service = new CultiveService(mockRepository.Object);
+        var service = new CropTypeService(mockRepository.Object);
 
         var result = service.GetAll();
 
@@ -26,19 +26,19 @@ public class CultiveServiceTests
     [Fact]
     public void GetAll_WhenRepositoryHasData_ReturnsAllCultives()
     {
-        var mockRepository = new Mock<ICultiveRepository>();
+        var mockRepository = new Mock<ICropTypeRepository>();
 
-        var data = new List<Cultive>
+        var data = new List<CropType>
         {
-            new Cultive { Name = "Carrot" },
-            new Cultive { Name = "Lettuce" }
+            new CropType { Name = "Carrot" },
+            new CropType { Name = "Lettuce" }
         };
 
         mockRepository
             .Setup(r => r.GetAll())
             .Returns(data);
 
-        var service = new CultiveService(mockRepository.Object);
+        var service = new CropTypeService(mockRepository.Object);
 
         var result = service.GetAll();
 
@@ -47,17 +47,17 @@ public class CultiveServiceTests
     [Fact]
     public void GetById_ReturnsCultive()
     {
-        var mockRepository = new Mock<ICultiveRepository>();
-        var data = new List<Cultive>
+        var mockRepository = new Mock<ICropTypeRepository>();
+        var data = new List<CropType>
         {
-            new Cultive {ID = 1, Name = "Carrot", Season = Season.Spring },
-            new Cultive {ID = 2, Name = "Lettuce", Season = Season.Spring }
+            new CropType {ID = 1, Name = "Carrot", Season = Season.Spring },
+            new CropType {ID = 2, Name = "Lettuce", Season = Season.Spring }
         };
 
         mockRepository
             .Setup(r => r.GetById(It.IsAny<int>()))
             .Returns((int id) => data.FirstOrDefault(c => c.ID == id));
-        var service = new CultiveService(mockRepository.Object);
+        var service = new CropTypeService(mockRepository.Object);
         
         var result = service.GetById(1);
         Assert.Equal("Carrot", result?.Name);
@@ -67,13 +67,13 @@ public class CultiveServiceTests
     [Fact]
     public void GetById_ReturnsNullForNonExistingCultive()
     {
-        var mockRepository = new Mock<ICultiveRepository>();
+        var mockRepository = new Mock<ICropTypeRepository>();
 
         mockRepository
             .Setup(r => r.GetById(999))
-            .Returns((Cultive?)null);
+            .Returns((CropType?)null);
     
-        var service = new CultiveService(mockRepository.Object);
+        var service = new CropTypeService(mockRepository.Object);
         
         var result = service.GetById(999);
         Assert.Null(result);
@@ -81,26 +81,26 @@ public class CultiveServiceTests
     [Fact]
     public void Update_CallsRepositoryUpdate()
     {
-        var mockRepository = new Mock<ICultiveRepository>();
-        var data = new List<Cultive>
+        var mockRepository = new Mock<ICropTypeRepository>();
+        var data = new List<CropType>
         {
-            new Cultive { ID = 1, Name = "Pepper" }
+            new CropType { ID = 1, Name = "Pepper" }
         };
         mockRepository
             .Setup(r => r.GetById(It.IsAny<int>()))
             .Returns((int id) => data.FirstOrDefault(c => c.ID == id));
         mockRepository
-            .Setup(r => r.Update(It.IsAny<Cultive>()))
-            .Callback((Cultive c) =>
+            .Setup(r => r.Update(It.IsAny<CropType>()))
+            .Callback((CropType c) =>
             {
                 var existing = data.FirstOrDefault(x => x.ID == c.ID);
                 if (existing != null)
                     existing.Name = c.Name;
             });
 
-        var service = new CultiveService(mockRepository.Object);
-        var cultive = new Cultive { ID = 1, Name = "Bell Pepper" };
-        service.Update(cultive);
+        var service = new CropTypeService(mockRepository.Object);
+        var cropType = new CropType { ID = 1, Name = "Bell Pepper" };
+        service.Update(cropType);
         var result = service.GetById(1);
 
         Assert.Equal("Bell Pepper", result?.Name);    
@@ -108,26 +108,26 @@ public class CultiveServiceTests
     [Fact]
     public void Update_NonExistentId_ThrowsException()
     {
-        var mockRepository = new Mock<ICultiveRepository>();
+        var mockRepository = new Mock<ICropTypeRepository>();
 
         mockRepository
             .Setup(r => r.GetById(999))
-            .Returns((Cultive?)null);
+            .Returns((CropType?)null);
 
-        var service = new CultiveService(mockRepository.Object);
+        var service = new CropTypeService(mockRepository.Object);
 
-        var cultive = new Cultive { ID = 999, Name = "NonExisting" };
+        var cropType = new CropType { ID = 999, Name = "NonExisting" };
 
-        Assert.Throws<KeyNotFoundException>(() => service.Update(cultive));
+        Assert.Throws<KeyNotFoundException>(() => service.Update(cropType));
     }
     [Fact]
     public void Delete_DeletesCultive()
     {
-        var mockRepository = new Mock<ICultiveRepository>();
-        var data = new List<Cultive>
+        var mockRepository = new Mock<ICropTypeRepository>();
+        var data = new List<CropType>
         {
-            new Cultive {ID = 1, Name = "Cucumber", Season = Season.Summer },
-            new Cultive {ID = 2, Name = "Lettuce", Season = Season.Spring }
+            new CropType {ID = 1, Name = "Cucumber", Season = Season.Summer },
+            new CropType {ID = 2, Name = "Lettuce", Season = Season.Spring }
         };
 
         mockRepository
@@ -142,7 +142,7 @@ public class CultiveServiceTests
                     data.Remove(existing);
             });
         
-        var service = new CultiveService(mockRepository.Object);
+        var service = new CropTypeService(mockRepository.Object);
         
         service.Delete(1);
         
@@ -153,13 +153,13 @@ public class CultiveServiceTests
     [Fact]
     public void Delete_NonExistentId_ThrowsException()
     {
-        var mockRepository = new Mock<ICultiveRepository>();
+        var mockRepository = new Mock<ICropTypeRepository>();
 
         mockRepository
             .Setup(r => r.GetById(999))
-            .Returns((Cultive?)null);
+            .Returns((CropType?)null);
 
-        var service = new CultiveService(mockRepository.Object);
+        var service = new CropTypeService(mockRepository.Object);
 
         Assert.Throws<KeyNotFoundException>(() => service.Delete(999));
 
@@ -168,32 +168,32 @@ public class CultiveServiceTests
     [Fact]
     public void Add_CallsRepositoryAdd()
     {
-        var mockRepository = new Mock<ICultiveRepository>();
+        var mockRepository = new Mock<ICropTypeRepository>();
 
-        var service = new CultiveService(mockRepository.Object);
+        var service = new CropTypeService(mockRepository.Object);
 
-        var cultive = new Cultive { Name = "Tomato" };
+        var cropType = new CropType { Name = "Tomato" };
 
-        service.Add(cultive);
+        service.Add(cropType);
 
-        mockRepository.Verify(r => r.Add(cultive), Times.Once);
+        mockRepository.Verify(r => r.Add(cropType), Times.Once);
     }
     [Fact]
     public void Update_NoChanges_DoesNotFail()
     {
-        var mockRepository = new Mock<ICultiveRepository>();
+        var mockRepository = new Mock<ICropTypeRepository>();
 
-        var cultive = new Cultive { ID = 1, Name = "Pepper", Season = Season.Summer, Disponible = true };
+        var cropType = new CropType { ID = 1, Name = "Pepper", Season = Season.Summer };
 
         mockRepository
             .Setup(r => r.GetById(1))
-            .Returns(cultive);
+            .Returns(cropType);
 
-        var service = new CultiveService(mockRepository.Object);
+        var service = new CropTypeService(mockRepository.Object);
 
-        service.Update(cultive);
+        service.Update(cropType);
 
-        mockRepository.Verify(r => r.Update(cultive), Times.Once);
+        mockRepository.Verify(r => r.Update(cropType), Times.Once);
     }
 
 }

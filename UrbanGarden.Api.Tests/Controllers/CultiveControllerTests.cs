@@ -7,76 +7,76 @@ using Moq;
 using Microsoft.AspNetCore.Mvc;
 using UrbanGarden.Api.Controllers;
 
-public class CultiveControllerTests
+public class CropTypeControllerTests
 {
     [Fact]
     public void GetAll_ReturnsOkWithList()
     {
-        var mockService = new Mock<ICultiveService>();
+        var mockService = new Mock<ICropTypeService>();
 
         mockService
             .Setup(s => s.GetAll())
-            .Returns(new List<Cultive>
+            .Returns(new List<CropType>
             {
-                new Cultive { ID = 1, Name = "Carrot" },
-                new Cultive { ID = 2, Name = "Lettuce" }
+                new CropType { ID = 1, Name = "Carrot" },
+                new CropType { ID = 2, Name = "Lettuce" }
             });
 
-        var controller = new CultiveController(mockService.Object);
+        var controller = new CropTypeController(mockService.Object);
 
         var result = controller.GetAll();
 
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
-        var list = Assert.IsAssignableFrom<IEnumerable<CultiveDto>>(okResult.Value);
+        var list = Assert.IsAssignableFrom<IEnumerable<CropTypeDto>>(okResult.Value);
 
         Assert.Equal(2, list.Count());
     }
     [Fact]
     public void GetAll_WhenEmpty_ReturnsOkWithEmptyList()
     {
-        var mockService = new Mock<ICultiveService>();
+        var mockService = new Mock<ICropTypeService>();
 
         mockService
             .Setup(s => s.GetAll())
-            .Returns(new List<Cultive>());
+            .Returns(new List<CropType>());
 
-        var controller = new CultiveController(mockService.Object);
+        var controller = new CropTypeController(mockService.Object);
 
         var result = controller.GetAll();
 
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
-        var list = Assert.IsAssignableFrom<IEnumerable<CultiveDto>>(okResult.Value);
+        var list = Assert.IsAssignableFrom<IEnumerable<CropTypeDto>>(okResult.Value);
 
         Assert.Empty(list);
     }
     [Fact]
     public void GetById_WhenExists_ReturnsOk()
     {
-        var mockService = new Mock<ICultiveService>();
+        var mockService = new Mock<ICropTypeService>();
 
         mockService
             .Setup(s => s.GetById(1))
-            .Returns(new Cultive { ID = 1, Name = "Carrot" });
+            .Returns(new CropType { ID = 1, Name = "Carrot" });
 
-        var controller = new CultiveController(mockService.Object);
+        var controller = new CropTypeController(mockService.Object);
 
         var result = controller.GetById(1);
 
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
-        var cultive = Assert.IsType<CultiveDto>(okResult.Value);
+        var cropType = Assert.IsType<CropTypeDto>(okResult.Value);
 
-        Assert.Equal("Carrot", cultive.Name);
+        Assert.Equal("Carrot", cropType.Name);
     }
     [Fact]
     public void GetById_WhenNotExists_ReturnsNotFound()
     {
-        var mockService = new Mock<ICultiveService>();
+        var mockService = new Mock<ICropTypeService>();
 
         mockService
             .Setup(s => s.GetById(1))
-            .Returns((Cultive?)null);
+            .Returns((CropType?)null);
 
-        var controller = new CultiveController(mockService.Object);
+        var controller = new CropTypeController(mockService.Object);
 
         var result = controller.GetById(1);
 
@@ -85,19 +85,19 @@ public class CultiveControllerTests
     [Fact]
     public void Create_WhenValid_ReturnsCreated()
     {
-        var mockService = new Mock<ICultiveService>();
+        var mockService = new Mock<ICropTypeService>();
 
-        var createDto = new CultiveCreateDto 
+        var createDto = new CreateCropTypeDto
         { 
             Name = "Carrot", 
             Season = Season.Spring 
         };
 
         mockService
-            .Setup(s => s.Add(It.IsAny<Cultive>()))
-            .Callback<Cultive>(c => c.ID = 1);
+            .Setup(s => s.Add(It.IsAny<CropType>()))
+            .Callback<CropType>(c => c.ID = 1);
 
-        var controller = new CultiveController(mockService.Object);
+        var controller = new CropTypeController(mockService.Object);
         controller.ControllerContext = new ControllerContext
         {
             RouteData = new Microsoft.AspNetCore.Routing.RouteData()
@@ -108,25 +108,25 @@ public class CultiveControllerTests
 
         var createdResult = Assert.IsType<CreatedAtActionResult>(result);
 
-        var returnedCultive = Assert.IsType<Cultive>(createdResult.Value);
+        var returnedCropType = Assert.IsType<CropType>(createdResult.Value);
 
-        Assert.Equal(1, returnedCultive.ID);
-        Assert.Equal("Carrot", returnedCultive.Name);
+        Assert.Equal(1, returnedCropType.ID);
+        Assert.Equal("Carrot", returnedCropType.Name);
 
-        mockService.Verify(s => s.Add(It.IsAny<Cultive>()), Times.Once);
+        mockService.Verify(s => s.Add(It.IsAny<CropType>()), Times.Once);
     }
     [Fact]
     public void Create_WhenInvalid_ReturnsBadRequest()
     {
-        var mockService = new Mock<ICultiveService>();
+        var mockService = new Mock<ICropTypeService>();
 
-        var createDto = new CultiveCreateDto 
+        var createDto = new CreateCropTypeDto 
         { 
             Name = "", 
             Season = Season.Spring 
         };
 
-        var controller = new CultiveController(mockService.Object);
+        var controller = new CropTypeController(mockService.Object);
         controller.ModelState.AddModelError("Name", "The Name field is required.");
 
         var result = controller.Create(createDto);
@@ -134,14 +134,14 @@ public class CultiveControllerTests
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
         Assert.IsType<SerializableError>(badRequestResult.Value);
 
-        mockService.Verify(s => s.Add(It.IsAny<Cultive>()), Times.Never);
+        mockService.Verify(s => s.Add(It.IsAny<CropType>()), Times.Never);
     }
     [Fact]
     public void Update_WhenValid_ReturnsNoContent()
     {
-        var mockService = new Mock<ICultiveService>();
+        var mockService = new Mock<ICropTypeService>();
 
-        var updateDto = new CultiveDto 
+        var updateDto = new CropTypeDto 
         { 
             ID = 1, 
             Name = "Carrot", 
@@ -151,20 +151,20 @@ public class CultiveControllerTests
 
         mockService
             .Setup(s => s.GetById(1))
-            .Returns(new Cultive { ID = 1, Name = "Carrot", Season = Season.Spring, Disponible = true });
+            .Returns(new CropType { ID = 1, Name = "Carrot", Season = Season.Spring, Disponible = true });
 
-        var controller = new CultiveController(mockService.Object);
+        var controller = new CropTypeController(mockService.Object);
 
         var result = controller.Update(1, updateDto);
-        mockService.Verify(s => s.Update(It.IsAny<Cultive>()), Times.Once);
+        mockService.Verify(s => s.Update(It.IsAny<CropType>()), Times.Once);
         Assert.IsType<NoContentResult>(result);
     }
     [Fact]
     public void Update_WhenNotExists_ReturnsNotFound()
     {
-        var mockService = new Mock<ICultiveService>();
+        var mockService = new Mock<ICropTypeService>();
 
-        var updateDto = new CultiveDto 
+        var updateDto = new CropTypeDto 
         { 
             ID = 1, 
             Name = "Carrot", 
@@ -174,21 +174,21 @@ public class CultiveControllerTests
 
         mockService
             .Setup(s => s.GetById(1))
-            .Returns((Cultive?)null);
+            .Returns((CropType?)null);
 
-        var controller = new CultiveController(mockService.Object);
+        var controller = new CropTypeController(mockService.Object);
 
         var result = controller.Update(1, updateDto);
-        mockService.Verify(s => s.Update(It.IsAny<Cultive>()), Times.Never);
+        mockService.Verify(s => s.Update(It.IsAny<CropType>()), Times.Never);
 
         Assert.IsType<NotFoundResult>(result);
     }
     [Fact]
     public void Update_WhenInvalid_ReturnsBadRequest()
     {
-        var mockService = new Mock<ICultiveService>();
+        var mockService = new Mock<ICropTypeService>();
 
-        var updateDto = new CultiveDto 
+        var updateDto = new CropTypeDto 
         { 
             ID = 1, 
             Name = "", 
@@ -198,26 +198,26 @@ public class CultiveControllerTests
 
         mockService
             .Setup(s => s.GetById(1))
-            .Returns(new Cultive { ID = 1, Name = "Carrot", Season = Season.Spring, Disponible = true });
+            .Returns(new CropType { ID = 1, Name = "Carrot", Season = Season.Spring, Disponible = true });
 
-        var controller = new CultiveController(mockService.Object);
+        var controller = new CropTypeController(mockService.Object);
         controller.ModelState.AddModelError("Name", "The Name field is required.");
 
         var result = controller.Update(1, updateDto);
-        mockService.Verify(s => s.Update(It.IsAny<Cultive>()), Times.Never);
+        mockService.Verify(s => s.Update(It.IsAny<CropType>()), Times.Never);
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
         Assert.IsType<SerializableError>(badRequestResult.Value);
     }
     [Fact]
     public void Delete_WhenExists_ReturnsNoContent()
     {
-        var mockService = new Mock<ICultiveService>();
+        var mockService = new Mock<ICropTypeService>();
 
         mockService
             .Setup(s => s.GetById(1))
-            .Returns(new Cultive { ID = 1, Name = "Carrot" });
+            .Returns(new CropType { ID = 1, Name = "Carrot" });
 
-        var controller = new CultiveController(mockService.Object);
+        var controller = new CropTypeController(mockService.Object);
 
         var result = controller.Delete(1);
         mockService.Verify(s => s.Delete(1), Times.Once);
@@ -226,13 +226,13 @@ public class CultiveControllerTests
     [Fact]
     public void Delete_WhenNotExists_ReturnsNotFound()
     {
-        var mockService = new Mock<ICultiveService>();
+        var mockService = new Mock<ICropTypeService>();
 
         mockService
             .Setup(s => s.GetById(1))
-            .Returns((Cultive?)null);
+            .Returns((CropType?)null);
 
-        var controller = new CultiveController(mockService.Object);
+        var controller = new CropTypeController(mockService.Object);
 
         var result = controller.Delete(1);
         mockService.Verify(s => s.Delete(It.IsAny<int>()), Times.Never);
