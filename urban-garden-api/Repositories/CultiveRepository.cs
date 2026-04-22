@@ -34,7 +34,9 @@ public class CultiveRepository : ICultiveRepository
 
     public void Delete(int id)
     {
-        _cultives.Remove(GetById(id));
+        var existing = GetById(id);
+        if (existing == null) return;
+        _cultives.Remove(existing);
     }
 }
 }
