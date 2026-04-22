@@ -6,10 +6,12 @@ namespace UrbanGarden.Api.Services
     public class PlantedCropService : IPlantedCropService
     {
         private readonly IPlantedCropRepository _repository;
+        private readonly IHarvestRepository _harvestRepository;
 
-        public PlantedCropService(IPlantedCropRepository repository)
+        public PlantedCropService(IPlantedCropRepository repository, IHarvestRepository harvestRepository)
         {
             _repository = repository;
+            _harvestRepository = harvestRepository;
         }
 
         public IEnumerable<PlantedCrop> GetAll()
@@ -37,31 +39,29 @@ namespace UrbanGarden.Api.Services
         public void Harvest(int id)
         {
             var plantedCrop = _repository.GetById(id);
-            if (plantedCrop == null) throw new KeyNotFoundException("PlantedCrop not found");
+            if (plantedCrop == null) throw new KeyNotFoundException();
 
             var cropType = _repository.GetCropTypeById(plantedCrop.CropTypeId);
 
-            switch (plantedCrop.State)
+            if (plantedCrop.State != CropStatus.ReadyForHarvest)
+                throw new InvalidOperationException();
+
+            _harvestRepository.Add(new Harvest
             {
-                case CropStatus.Planted:
-                case CropStatus.Growing:
-                    throw new InvalidOperationException("Crop is not ready for harvest");
+                PlantedCropId = plantedCrop.Id,
+                CropTypeId = plantedCrop.CropTypeId,
+                Quantity = 1.0m, // This is a stub. In a real implementation, this would be calculated based on the crop type and growth conditions.
+                Date = DateTime.UtcNow
+            });
 
-                case CropStatus.ReadyForHarvest:
-
-                    if (cropType?.IsPerennial == true)
-                    {
-                        plantedCrop.State = CropStatus.Growing;
-                        _repository.Update(plantedCrop);
-                    }
-                    else
-                    {
-                        _repository.Delete(id);
-                    }
-                    break;
-
-                case CropStatus.Withered:
-                    throw new InvalidOperationException("Crop is withered and cannot be harvested");
+            if (cropType?.IsPerennial == true)
+            {
+                plantedCrop.State = CropStatus.Growing;
+                _repository.Update(plantedCrop);
+            }
+            else
+            {
+                _repository.Delete(id);
             }
         }
         public void Delete(int id)
