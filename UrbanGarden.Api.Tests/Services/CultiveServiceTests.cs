@@ -1,6 +1,5 @@
 using Xunit;
 using UrbanGarden.Api.Services;
-using UrbanGarden.Api.Repositories;
 using UrbanGarden.Api.Models.Entities;
 using UrbanGarden.Api.Models.Enums;
 using Moq;

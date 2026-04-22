@@ -3,7 +3,7 @@ using UrbanGarden.Api.Models.Enums;
 
 namespace UrbanGarden.Api.Models.Dtos
 {
-    public class CultivoDto
+    public class CultiveDto
     {
         public int ID { get; set; }
         public required string Name { get; set; }

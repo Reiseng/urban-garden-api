@@ -24,10 +24,10 @@ namespace UrbanGarden.Api.Controllers
         /// </summary>
         /// <returns>Lista de cultivos en formato DTO.</returns>
         [HttpGet]
-        public ActionResult<IEnumerable<CultivoDto>> GetAll()
+        public ActionResult<IEnumerable<CultiveDto>> GetAll()
         {
             var cultives = _cultiveService.GetAll();
-            var cultivesDto = cultives.Select(c => new CultivoDto
+            var cultivesDto = cultives.Select(c => new CultiveDto
             {
                 ID = c.ID,
                 Name = c.Name,
@@ -44,7 +44,7 @@ namespace UrbanGarden.Api.Controllers
         /// <param name="id">ID del cultivo a buscar.</param>
         /// <returns>El cultivo encontrado o 404 si no existe.</returns>
         [HttpGet("{id}")]
-        public ActionResult<CultivoDto> GetById(int id)
+        public ActionResult<CultiveDto> GetById(int id)
         {
             var cultive = _cultiveService.GetById(id);
             if (cultive == null)
@@ -52,7 +52,7 @@ namespace UrbanGarden.Api.Controllers
                 return NotFound();
             }
 
-            var cultiveDto = new CultivoDto
+            var cultiveDto = new CultiveDto
             {
                 ID = cultive.ID,
                 Name = cultive.Name,
@@ -95,7 +95,7 @@ namespace UrbanGarden.Api.Controllers
         /// <param name="updateDto">Datos actualizados del cultivo.</param>
         /// <returns>204 No Content si se actualiza correctamente, o 404 si no existe.</returns>
         [HttpPut("{id}")]
-        public ActionResult Update(int id, [FromBody] CultivoDto updateDto)
+        public ActionResult Update(int id, [FromBody] CultiveDto updateDto)
         {
             if (!ModelState.IsValid)
             {
