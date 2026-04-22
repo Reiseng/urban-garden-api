@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "urban-garden-api", "urban-garden-api\urban-garden-api.csproj", "{3E650324-FD6B-4172-BCEF-FE8C1444FD74}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UrbanGarden.Api.Tests", "UrbanGarden.Api.Tests\UrbanGarden.Api.Tests.csproj", "{11C2BCFE-EAC1-446F-9F6F-2B0E3561A7A0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,18 @@ Global
 		{3E650324-FD6B-4172-BCEF-FE8C1444FD74}.Release|x64.Build.0 = Release|Any CPU
 		{3E650324-FD6B-4172-BCEF-FE8C1444FD74}.Release|x86.ActiveCfg = Release|Any CPU
 		{3E650324-FD6B-4172-BCEF-FE8C1444FD74}.Release|x86.Build.0 = Release|Any CPU
+		{11C2BCFE-EAC1-446F-9F6F-2B0E3561A7A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11C2BCFE-EAC1-446F-9F6F-2B0E3561A7A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11C2BCFE-EAC1-446F-9F6F-2B0E3561A7A0}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{11C2BCFE-EAC1-446F-9F6F-2B0E3561A7A0}.Debug|x64.Build.0 = Debug|Any CPU
+		{11C2BCFE-EAC1-446F-9F6F-2B0E3561A7A0}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{11C2BCFE-EAC1-446F-9F6F-2B0E3561A7A0}.Debug|x86.Build.0 = Debug|Any CPU
+		{11C2BCFE-EAC1-446F-9F6F-2B0E3561A7A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11C2BCFE-EAC1-446F-9F6F-2B0E3561A7A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{11C2BCFE-EAC1-446F-9F6F-2B0E3561A7A0}.Release|x64.ActiveCfg = Release|Any CPU
+		{11C2BCFE-EAC1-446F-9F6F-2B0E3561A7A0}.Release|x64.Build.0 = Release|Any CPU
+		{11C2BCFE-EAC1-446F-9F6F-2B0E3561A7A0}.Release|x86.ActiveCfg = Release|Any CPU
+		{11C2BCFE-EAC1-446F-9F6F-2B0E3561A7A0}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -28,13 +28,13 @@ namespace UrbanGarden.Api.Services
 
         public void Update(Cultive cultive)
         {
-            if (_repository.GetById(cultive.ID) == null) throw new Exception("Cultive not found");
+            if (_repository.GetById(cultive.ID) == null) throw new KeyNotFoundException("Cultive not found");
             _repository.Update(cultive);
         }
 
         public void Delete(int id)
         {
-            if (_repository.GetById(id) == null) throw new Exception("Cultive not found");
+            if (_repository.GetById(id) == null) throw new KeyNotFoundException("Cultive not found");
             _repository.Delete(id);
         }
     }
