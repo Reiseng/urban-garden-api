@@ -6,23 +6,27 @@ namespace UrbanGarden.Api.Controllers
     using UrbanGarden.Api.Services;
 
     /// <summary>
-    /// Controlador para gestionar operaciones CRUD de cultivos.
+    /// Controlador para gestionar operaciones CRUD de tipos de cultivos.
     /// </summary>
     [ApiController]
-    [Route("api/{version}/[controller]")]
+    [Route("api/{version}/crops")]
     public class CropTypeController : ControllerBase
     {
         private readonly ICropTypeService _cropTypeService;
 
+        /// <summary>
+        /// Constructor del controlador de tipos de cultivos.
+        /// </summary>
+        /// <param name="cropTypeService">Servicio de tipos de cultivos.</param>
         public CropTypeController(ICropTypeService cropTypeService)
         {
             _cropTypeService = cropTypeService;
         }
 
         /// <summary>
-        /// Obtiene una lista de todos los cultivos disponibles.
+        /// Obtiene una lista de todos los tipos de cultivos disponibles.
         /// </summary>
-        /// <returns>Lista de cultivos en formato DTO.</returns>
+        /// <returns>Lista de los tipos de cultivos.</returns>
         [HttpGet]
         public ActionResult<IEnumerable<CropTypeDto>> GetAll()
         {
@@ -39,10 +43,10 @@ namespace UrbanGarden.Api.Controllers
         }
 
         /// <summary>
-        /// Obtiene un cultivo específico por su ID.
+        /// Obtiene un tipo de cultivo específico por su ID.
         /// </summary>
-        /// <param name="id">ID del cultivo a buscar.</param>
-        /// <returns>El cultivo encontrado o 404 si no existe.</returns>
+        /// <param name="id">ID del tipo de cultivo a buscar.</param>
+        /// <returns>El tipo de cultivo encontrado o 404 si no existe.</returns>
         [HttpGet("{id}")]
         public ActionResult<CropTypeDto> GetById(int id)
         {
@@ -64,10 +68,10 @@ namespace UrbanGarden.Api.Controllers
         }
 
         /// <summary>
-        /// Crea un nuevo cultivo.
+        /// Crea un nuevo tipo de cultivo.
         /// </summary>
-        /// <param name="createDto">Datos del cultivo a crear.</param>
-        /// <returns>El cultivo creado con su ID asignado.</returns>
+        /// <param name="createDto">Datos del tipo de cultivo a crear.</param>
+        /// <returns>El tipo de cultivo creado con su ID asignado.</returns>
         [HttpPost]
         public ActionResult Create([FromBody] CreateCropTypeDto createDto)
         {
@@ -89,10 +93,10 @@ namespace UrbanGarden.Api.Controllers
         }
 
         /// <summary>
-        /// Actualiza un cultivo existente.
+        /// Actualiza un tipo de cultivo existente.
         /// </summary>
-        /// <param name="id">ID del cultivo a actualizar.</param>
-        /// <param name="updateDto">Datos actualizados del cultivo.</param>
+        /// <param name="id">ID del tipo de cultivo a actualizar.</param>
+        /// <param name="updateDto">Datos actualizados del tipo de cultivo.</param>
         /// <returns>204 No Content si se actualiza correctamente, o 404 si no existe.</returns>
         [HttpPut("{id}")]
         public ActionResult Update(int id, [FromBody] CropTypeDto updateDto)
@@ -118,9 +122,9 @@ namespace UrbanGarden.Api.Controllers
         }
         
         /// <summary>
-        /// Elimina un cultivo por su ID.
+        /// Elimina un tipo de cultivo por su ID.
         /// </summary>
-        /// <param name="id">ID del cultivo a eliminar.</param>
+        /// <param name="id">ID del tipo de cultivo a eliminar.</param>
         /// <returns>204 No Content si se elimina correctamente, o 404 si no existe.</returns>
         [HttpDelete("{id}")]
         public ActionResult Delete(int id)

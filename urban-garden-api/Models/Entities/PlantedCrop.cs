@@ -7,8 +7,12 @@ namespace UrbanGarden.Api.Models.Entities
         public int Id { get; set; }
 
         public required int CropTypeId { get; set; }
-
+        public required int GardenPlotId { get; set; }
         public DateTime PlantedAt { get; set; } = DateTime.UtcNow;
         public CropStatus State { get; set; } = CropStatus.Planted;
+    }
+    public class PlantCropDto
+    {
+        public int CropTypeId { get; set; }
     }
 }
