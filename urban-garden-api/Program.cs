@@ -10,8 +10,8 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
-builder.Services.AddSingleton<ICultiveRepository, CultiveRepository>();
-builder.Services.AddScoped<ICultiveService, CultiveService>();
+builder.Services.AddSingleton<ICropTypeRepository, CropTypeRepository>();
+builder.Services.AddScoped<ICropTypeService, CropTypeService>();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
