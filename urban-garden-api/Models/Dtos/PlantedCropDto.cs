@@ -12,4 +12,12 @@ namespace UrbanGarden.Api.Models.Dtos
         public DateTime PlantedAt { get; set; } = DateTime.UtcNow;
         public CropStatus State { get; set; } = CropStatus.Planted;
     }
+    public class PlantCropDto
+    {
+        public int CropTypeId { get; set; }
+    }
+    public class UpdatePlantedCropDto
+    {
+        public CropStatus State { get; set; }
+    }
 }

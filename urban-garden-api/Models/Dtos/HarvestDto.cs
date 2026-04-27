@@ -1,9 +1,7 @@
-namespace UrbanGarden.Api.Models.Entities
+namespace UrbanGarden.Api.Models.Dtos
 {
-   public class Harvest
+       public class HarvestDto
     {
-        public int Id { get; set; }
-
         public int PlantedCropId { get; set; }
         public int CropTypeId { get; set; }
         public int GardenPlotId { get; set; }

@@ -13,16 +13,19 @@ namespace UrbanGarden.Api.Services
     {
         private readonly IGardenPlotRepository _gardenPlotRepository;
         private readonly IPlantedCropService _plantedCropService;
+        private readonly IHarvestService _harvestService;
 
         /// <summary>
         /// Constructor del servicio de huertos.
         /// </summary>
         /// <param name="gardenPlotRepository">Repositorio de huertos.</param>
         /// <param name="plantedCropService">Servicio de cultivos plantados.</param>
-        public GardenPlotService(IGardenPlotRepository gardenPlotRepository, IPlantedCropService plantedCropService)
+        /// <param name="harvestService">Servicio del historial de cosechas.</param>
+        public GardenPlotService(IGardenPlotRepository gardenPlotRepository, IPlantedCropService plantedCropService, IHarvestService harvestService)
         {
             _gardenPlotRepository = gardenPlotRepository;
             _plantedCropService = plantedCropService;
+            _harvestService = harvestService;
         }
 
         /// <summary>
@@ -118,13 +121,15 @@ namespace UrbanGarden.Api.Services
         /// Cosecha el cultivo activo de un huerto.
         /// </summary>
         /// <param name="gardenPlotId">ID del huerto.</param>
+        /// <param name="dto">Datos a registrar de al cosecha.</param>
         /// <exception cref="KeyNotFoundException">Thrown when the garden plot is not found.</exception>
         /// <exception cref="InvalidOperationException">Thrown when there is no crop ready to harvest.</exception>
-        public void HarvestCrop(int gardenPlotId)
+        public void HarvestCrop(int gardenPlotId, CreateHarvestDto dto)
         {
             var gardenPlot = _gardenPlotRepository.GetById(gardenPlotId) ?? throw new KeyNotFoundException("Garden plot not found");
+            if (dto.Quantity <= 0) throw new InvalidOperationException("Quantity need to be a positive value.");
             if (gardenPlot.ActiveCrop == null || gardenPlot.ActiveCrop.State != CropStatus.ReadyForHarvest) throw new InvalidOperationException("No crop ready to harvest in this garden plot");
-            var shouldRemove = _plantedCropService.Harvest(gardenPlot.ActiveCrop.Id);
+            var shouldRemove = _plantedCropService.Harvest(gardenPlot.ActiveCrop.Id, dto.Quantity);
 
             if (shouldRemove)
             {
@@ -147,6 +152,48 @@ namespace UrbanGarden.Api.Services
             _plantedCropService.Delete(gardenPlot.ActiveCrop.Id);
             gardenPlot.ActiveCrop = null;
             _gardenPlotRepository.Update(gardenPlot);
+        }
+        /// <summary>
+        /// Actualiza el estado del cultivo activo de un huerto.
+        /// </summary>
+        /// <param name="gardenPlotId">ID del huerto.</param>
+        /// <param name="dto">Datos actualizados del cultivo activo.</param>
+        /// <exception cref="KeyNotFoundException">Thrown when the garden plot is not found.</exception>
+        /// <exception cref="InvalidOperationException">Thrown when there is no valid data.</exception>
+        public void UpdateStatus(int gardenPlotId, UpdatePlantedCropDto dto)
+        {
+            var gardenPlot = _gardenPlotRepository.GetById(gardenPlotId) 
+                ?? throw new KeyNotFoundException("Garden plot not found");
+            if (gardenPlot.ActiveCrop == null) 
+                throw new InvalidOperationException("No active crop in this garden plot");
+            if (gardenPlot.ActiveCrop.State == dto.State) 
+                throw new InvalidOperationException("The crop is already in the specified state.");
+            if (!IsValidTransition(gardenPlot.ActiveCrop.State, dto.State))
+                throw new InvalidOperationException("Invalid state transition.");   
+            if (gardenPlot.ActiveCrop.State == CropStatus.Withered) 
+                throw new InvalidOperationException("Withered crops cannot be updated. Please remove the crop from the plot.");
+            gardenPlot.ActiveCrop.State = dto.State;
+            _plantedCropService.Update(gardenPlot.ActiveCrop.Id, dto.State);
+            _gardenPlotRepository.Update(gardenPlot);
+        }
+        public IEnumerable<Harvest> GetHarvests(int gardenPlotId)
+        {
+            var gardenPlot = _gardenPlotRepository.GetById(gardenPlotId) 
+                ?? throw new KeyNotFoundException("Garden plot not found");
+            
+            return _harvestService.GetAllByPlotId(gardenPlotId);
+        }
+        private bool IsValidTransition(CropStatus current, CropStatus next)
+        {
+            if (next == CropStatus.Withered)
+                return true;
+            return (current, next) switch
+            {
+                (CropStatus.Planted, CropStatus.Growing) => true,
+                (CropStatus.Growing, CropStatus.ReadyForHarvest) => true,
+                (CropStatus.ReadyForHarvest, CropStatus.Growing) => true, // perennes
+                _ => false
+            };
         }
     }
 }

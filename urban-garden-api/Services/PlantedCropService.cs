@@ -1,3 +1,4 @@
+using UrbanGarden.Api.Models.Dtos;
 using UrbanGarden.Api.Models.Entities;
 using UrbanGarden.Api.Models.Enums;
 
@@ -70,10 +71,11 @@ namespace UrbanGarden.Api.Services
         /// Cosecha un cultivo plantado.
         /// </summary>
         /// <param name="id">ID del cultivo plantado.</param>
+        /// <param name="Quantity"> Cantidad en KG a cosechar (valor tipo decimal).</param>
         /// <returns>True si el cultivo debe ser eliminado, false si es perenne.</returns>
         /// <exception cref="KeyNotFoundException">Thrown when the planted crop is not found.</exception>
         /// <exception cref="InvalidOperationException">Thrown when the crop is not ready for harvest.</exception>
-        public bool Harvest(int id)
+        public bool Harvest(int id, decimal Quantity)
         {
             var plantedCrop = _repository.GetById(id) ?? throw new KeyNotFoundException("PlantedCrop not found");
             var cropType = _cropTypeRepository.GetById(plantedCrop.CropTypeId);
@@ -84,8 +86,9 @@ namespace UrbanGarden.Api.Services
             _harvestRepository.Add(new Harvest
             {
                 PlantedCropId = plantedCrop.Id,
+                GardenPlotId = plantedCrop.GardenPlotId,
                 CropTypeId = plantedCrop.CropTypeId,
-                Quantity = 1.0m,
+                Quantity = Quantity,
                 Date = DateTime.UtcNow
             });
 

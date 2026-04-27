@@ -27,6 +27,7 @@ builder.Services.AddSingleton<IHarvestRepository, HarvestRepository>();
 builder.Services.AddScoped<ICropTypeService, CropTypeService>();
 builder.Services.AddScoped<IGardenPlotService, GardenPlotService>();
 builder.Services.AddScoped<IPlantedCropService, PlantedCropService>();
+builder.Services.AddScoped<IHarvestService, HarvestService>();
 
 var app = builder.Build();
 

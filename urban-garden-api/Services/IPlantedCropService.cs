@@ -1,3 +1,4 @@
+using UrbanGarden.Api.Models.Dtos;
 using UrbanGarden.Api.Models.Entities;
 using UrbanGarden.Api.Models.Enums;
 
@@ -38,8 +39,9 @@ namespace UrbanGarden.Api.Services
         /// Cosecha un cultivo plantado.
         /// </summary>
         /// <param name="id">ID del cultivo plantado.</param>
+        /// <param name="Quantity"> Cantidad en KG a cosechar (valor tipo decimal).</param>
         /// <returns>True si el cultivo debe ser eliminado, false si es perenne.</returns>
-        bool Harvest(int id);
+        bool Harvest(int id, decimal Quantity);
 
         /// <summary>
         /// Elimina un cultivo plantado por su ID.

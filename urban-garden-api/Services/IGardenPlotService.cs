@@ -51,12 +51,22 @@ namespace UrbanGarden.Api.Services
         /// Cosecha el cultivo activo de un huerto.
         /// </summary>
         /// <param name="gardenPlotId">ID del huerto.</param>
-        void HarvestCrop(int gardenPlotId);
+        /// <param name="dto">Datos a registrar de al cosecha.</param>
+        void HarvestCrop(int gardenPlotId, CreateHarvestDto dto);
 
         /// <summary>
         /// Elimina el cultivo activo de un huerto.
         /// </summary>
         /// <param name="gardenPlotId">ID del huerto.</param>
         void RemoveCrop(int gardenPlotId);
+
+        /// <summary>
+        /// Actualiza el estado del cultivo activo de un huerto.
+        /// </summary>
+        /// <param name="gardenPlotId">ID del huerto.</param>
+        /// <param name="dto">Datos a actualizar del cultivo activo.</param>
+        void UpdateStatus(int gardenPlotId, UpdatePlantedCropDto dto);
+
+        IEnumerable<Harvest> GetHarvests(int gardenPlotId);
     }
 }
