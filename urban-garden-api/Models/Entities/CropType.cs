@@ -6,7 +6,7 @@ namespace UrbanGarden.Api.Models.Entities
     {
         public int ID { get; set; }
         public required string Name { get; set; }
-        public Season Season { get; set; } = Season.YearRound;
+        public List<Season> Season { get; set; } = new List<Season>();
         public bool IsPerennial { get; set; }
         public bool Disponible { get; set; } = true;
     }

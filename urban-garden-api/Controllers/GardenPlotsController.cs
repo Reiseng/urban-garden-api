@@ -67,7 +67,7 @@ namespace UrbanGarden.Api.Controllers
                 }
             };
             _gardenPlotService.Add(newGardenPlot);
-            return CreatedAtAction(nameof(GetById), new { id = newGardenPlot.ID }, newGardenPlot);
+            return CreatedAtAction(nameof(GetById), new { version = RouteData.Values["version"],id = newGardenPlot.ID }, newGardenPlot);
         }
 
         /// <summary>
