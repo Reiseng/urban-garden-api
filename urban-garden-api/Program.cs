@@ -1,8 +1,11 @@
 using System.Text.Json.Serialization;
 using UrbanGarden.Api.Repositories;
 using UrbanGarden.Api.Services;
+using UrbanGarden.Api.Infrastructure.MQTT.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+var mqttBrokerIp = builder.Configuration["MQTT:BrokerIP"];
+var mqttBrokerPort = builder.Configuration["MQTT:BrokerPort"];
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -29,6 +32,9 @@ builder.Services.AddScoped<IGardenPlotService, GardenPlotService>();
 builder.Services.AddScoped<IPlantedCropService, PlantedCropService>();
 builder.Services.AddScoped<IHarvestService, HarvestService>();
 
+// MQTT
+builder.Services.AddSingleton<IMqttService, MqttClientService>( provider => new MqttClientService(mqttBrokerIp, mqttBrokerPort));
+builder.Services.AddHostedService<MqttHostedService>();
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
