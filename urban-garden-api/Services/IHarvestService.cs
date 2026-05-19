@@ -1,5 +1,4 @@
 using UrbanGarden.Api.Models.Entities;
-using UrbanGarden.Api.Models.Enums;
 
 namespace UrbanGarden.Api.Services
 {
