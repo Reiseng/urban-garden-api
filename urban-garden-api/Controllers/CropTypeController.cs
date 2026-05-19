@@ -29,7 +29,7 @@ namespace UrbanGarden.Api.Controllers
         /// </summary>
         /// <returns>Lista de los tipos de cultivos.</returns>
         [HttpGet]
-        public ActionResult<IEnumerable<CropTypeDto>> GetAll()
+        public IActionResult GetAll()
         {
             var cropTypes = _cropTypeService.GetAll();
             var cropTypesDto = cropTypes.Select(c => new CropTypeDto
@@ -49,7 +49,7 @@ namespace UrbanGarden.Api.Controllers
         /// <param name="id">ID del tipo de cultivo a buscar.</param>
         /// <returns>El tipo de cultivo encontrado o 404 si no existe.</returns>
         [HttpGet("{id}")]
-        public ActionResult<CropTypeDto> GetById(int id)
+        public IActionResult GetById(int id)
         {
             var cropType = _cropTypeService.GetById(id);
             if (cropType == null)
@@ -74,7 +74,7 @@ namespace UrbanGarden.Api.Controllers
         /// <param name="createDto">Datos del tipo de cultivo a crear.</param>
         /// <returns>El tipo de cultivo creado con su ID asignado.</returns>
         [HttpPost]
-        public ActionResult Create([FromBody] CreateCropTypeDto createDto)
+        public IActionResult Create([FromBody] CreateCropTypeDto createDto)
         {
             if (!ModelState.IsValid)
             {
@@ -99,7 +99,7 @@ namespace UrbanGarden.Api.Controllers
         /// <param name="updateDto">Datos actualizados del tipo de cultivo.</param>
         /// <returns>204 No Content si se actualiza correctamente, o 404 si no existe.</returns>
         [HttpPut("{id}")]
-        public ActionResult Update(int id, [FromBody] CropTypeDto updateDto)
+        public IActionResult Update(int id, [FromBody] CropTypeDto updateDto)
         {
             if (!ModelState.IsValid)
             {
@@ -127,7 +127,7 @@ namespace UrbanGarden.Api.Controllers
         /// <param name="id">ID del tipo de cultivo a eliminar.</param>
         /// <returns>204 No Content si se elimina correctamente, o 404 si no existe.</returns>
         [HttpDelete("{id}")]
-        public ActionResult Delete(int id)
+        public IActionResult Delete(int id)
         {
             var existingCropType = _cropTypeService.GetById(id);
             if (existingCropType == null)

@@ -38,7 +38,7 @@ namespace UrbanGarden.Api.Services
             {
                 throw new ArgumentException("Todos los campos son obligatorios");
             }
-            if (device.RegistrationKey != "SECRET_KEY")
+            if (device.RegistrationKey != "SECRET_KEY") // Reemplazar con una clave de registro segura o un mecanismo de validación adecuado
             {
                 throw new UnauthorizedAccessException("Clave de registro inválida");
             }
