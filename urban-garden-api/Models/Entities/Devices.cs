@@ -7,5 +7,6 @@ namespace UrbanGarden.Api.Models.Entities
         public string ApiKey { get; set; } = null!;
         public string Name { get; set; } = null!;
         public DateTime CreatedAt { get; set; }
+        public DateTime? LastSeenAt { get; set; }
     }
 }

@@ -32,10 +32,11 @@ builder.Services.AddScoped<ICropTypeService, CropTypeService>();
 builder.Services.AddScoped<IGardenPlotService, GardenPlotService>();
 builder.Services.AddScoped<IPlantedCropService, PlantedCropService>();
 builder.Services.AddScoped<IHarvestService, HarvestService>();
-builder.Services.AddScoped<IDeviceService, DeviceService>();
+builder.Services.AddSingleton<IDeviceService, DeviceService>();
 
 // MQTT
 builder.Services.AddSingleton<IMqttService, MqttClientService>( provider => new MqttClientService(mqttBrokerIp, mqttBrokerPort));
+builder.Services.AddSingleton<ISensorsService, SensorsService>();
 builder.Services.AddHostedService<MqttHostedService>();
 var app = builder.Build();
 

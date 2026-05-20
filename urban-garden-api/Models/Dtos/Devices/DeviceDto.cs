@@ -1,3 +1,5 @@
+using System.Data;
+
 namespace UrbanGarden.Api.Models.Dtos
 {
     public class DeviceDto
@@ -5,5 +7,6 @@ namespace UrbanGarden.Api.Models.Dtos
         public Guid ID { get; set; }
         public string Name { get; set; } = null!;
         public DateTime CreatedAt { get; set; }
+        public DateTime? LastSeenAt { get; set; }
     }
 }

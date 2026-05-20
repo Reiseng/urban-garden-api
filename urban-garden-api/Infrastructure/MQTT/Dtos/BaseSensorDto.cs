@@ -1,9 +1,9 @@
 namespace UrbanGarden.Api.Infrastructure.MQTT.Dtos
 {
-    public class SoilSensorDto
+    public class BaseSensorDto
     {
         public string ApiKey { get; set; } = null!;
-        public double Humidity { get; set; }
+
         public DateTime Timestamp { get; set; }
     }
 }
