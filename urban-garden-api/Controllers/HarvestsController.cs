@@ -25,6 +25,8 @@ namespace UrbanGarden.Api.Controllers
         /// Obtiene todos las cosechas realizadas disponibles.
         /// </summary>
         /// <returns>Lista de cosechas.</returns>
+        /// <response code="200">Cosechas obtenidas exitosamente.</response>
+        /// <response code="500">Error interno del servidor al procesar la solicitud.</response>
         [HttpGet]
         public IActionResult GetAll()
         {
@@ -44,6 +46,9 @@ namespace UrbanGarden.Api.Controllers
         /// </summary>
         /// <param name="id">ID de la cosecha.</param>
         /// <returns>La cosecha encontrada o 404 si no existe.</returns>
+        /// <response code="200">Cosecha obtenida exitosamente.</response>
+        /// <response code="404">No se encontró una cosecha con el ID especificado.</response>
+        /// <response code="500">Error interno del servidor al procesar la solicitud.</response>
         [HttpGet("{id}")]
         public IActionResult GetByID(int id)
         {

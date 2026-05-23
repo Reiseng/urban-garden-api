@@ -66,7 +66,14 @@ namespace UrbanGarden.Api.Services
 
             _repository.Update(existing);
         }
+        public void UpdateLastSeen(Device device, DateTime lastSeen)
+        {
+            if (device == null) return;
 
+            device.LastSeenAt = lastSeen;
+
+            _repository.Update(device);
+        }
         public void Delete(Guid id)
         {
             _repository.Delete(id);

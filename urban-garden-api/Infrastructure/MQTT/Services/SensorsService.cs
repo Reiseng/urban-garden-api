@@ -9,28 +9,32 @@ namespace UrbanGarden.Api.Infrastructure.MQTT.Services
     public class SensorsService : ISensorsService
     {
         private readonly IDeviceService _deviceService;
+        private readonly ISensorDataService _sensorDataService;
 
-        public SensorsService(IDeviceService deviceService)
+        public SensorsService(IDeviceService deviceService, ISensorDataService sensorDataService)
         {
             _deviceService = deviceService;
+            _sensorDataService = sensorDataService;
         }
 
-        public async Task ProcessSoilSensorData(string topic, string payload)
+        public Task ProcessSoilSensorData(string topic, string payload)
         {
             var data = JsonSerializer.Deserialize<SoilSensorDto>(payload);
             var device = ValidateDevice(topic, payload);
-            if (device == null) return;
-            Console.WriteLine($"ID del dispositivo: {device.ID} Humedad: {data?.Humidity} Fecha: {data?.Timestamp}");
-            return;
+            if (device == null) return Task.CompletedTask;
+            Console.WriteLine($"ID del dispositivo: {device.ID} Humedad: {string.Join(", ", data?.HumidityValues ?? [])} Fecha: {data?.Timestamp}");
+            _sensorDataService.SaveSoilSensorData(device.ID, data?.HumidityValues ?? new List<double>(), data?.Timestamp ?? DateTime.UtcNow);
+            return Task.CompletedTask;
         }
 
-        public async Task ProcessTemperatureSensorData(string topic, string payload)
+        public Task ProcessTemperatureSensorData(string topic, string payload)
         {
             var data = JsonSerializer.Deserialize<TemperatureSensorDto>(payload);
             var device = ValidateDevice(topic, payload);
-            if (device == null) return;
+            if (device == null) return Task.CompletedTask;
             Console.WriteLine($"ID del dispositivo: {device.ID} Temperatura: {data?.Temperature} Humedad Ambiente: {data?.Humidity} Fecha: {data?.Timestamp}");
-            return;
+            _sensorDataService.SaveTemperatureSensorData(device.ID, data?.Temperature ?? 0, data?.Humidity ?? 0, data?.Timestamp ?? DateTime.UtcNow);
+            return Task.CompletedTask;
         }
 
         private Device? ValidateDevice(string topic, string payload)

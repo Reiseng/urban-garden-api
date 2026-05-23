@@ -28,6 +28,8 @@ namespace UrbanGarden.Api.Controllers
         /// Obtiene una lista de todos los tipos de cultivos disponibles.
         /// </summary>
         /// <returns>Lista de los tipos de cultivos.</returns>
+        /// <response code="200">Lista de tipos de cultivos obtenida exitosamente.</response>
+        /// <response code="500">Error interno del servidor al procesar la solicitud.</response>
         [HttpGet]
         public IActionResult GetAll()
         {
@@ -48,6 +50,9 @@ namespace UrbanGarden.Api.Controllers
         /// </summary>
         /// <param name="id">ID del tipo de cultivo a buscar.</param>
         /// <returns>El tipo de cultivo encontrado o 404 si no existe.</returns>
+        /// <response code="200">Tipo de cultivo obtenido exitosamente.</response>
+        /// <response code="404">No se encontró un tipo de cultivo con el ID especificado.</response>
+        /// <response code="500">Error interno del servidor al procesar la solicitud.</response>
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
@@ -73,6 +78,9 @@ namespace UrbanGarden.Api.Controllers
         /// </summary>
         /// <param name="createDto">Datos del tipo de cultivo a crear.</param>
         /// <returns>El tipo de cultivo creado con su ID asignado.</returns>
+        /// <response code="201">Tipo de cultivo creado exitosamente.</response>
+        /// <response code="400">Solicitud inválida, por ejemplo, si los datos no son válidos.</response>
+        /// <response code="500">Error interno del servidor al procesar la solicitud.</response>
         [HttpPost]
         public IActionResult Create([FromBody] CreateCropTypeDto createDto)
         {
@@ -98,6 +106,10 @@ namespace UrbanGarden.Api.Controllers
         /// <param name="id">ID del tipo de cultivo a actualizar.</param>
         /// <param name="updateDto">Datos actualizados del tipo de cultivo.</param>
         /// <returns>204 No Content si se actualiza correctamente, o 404 si no existe.</returns>
+        /// <response code="204">Tipo de cultivo actualizado exitosamente.</response>
+        /// <response code="400">Solicitud inválida, por ejemplo, si los datos no son válidos.</response>
+        /// <response code="404">No se encontró un tipo de cultivo con el ID especificado.</response>
+        /// <response code="500">Error interno del servidor al procesar la solicitud.</response>
         [HttpPut("{id}")]
         public IActionResult Update(int id, [FromBody] CropTypeDto updateDto)
         {
@@ -126,6 +138,10 @@ namespace UrbanGarden.Api.Controllers
         /// </summary>
         /// <param name="id">ID del tipo de cultivo a eliminar.</param>
         /// <returns>204 No Content si se elimina correctamente, o 404 si no existe.</returns>
+        /// <response code="204">Tipo de cultivo eliminado exitosamente.</response>
+        /// <response code="404">No se encontró un tipo de cultivo con el ID especificado.</response>
+        /// <response code="400">Solicitud inválida, por ejemplo, si el tipo de cultivo no se puede eliminar debido a que está asociado a cultivos activos o huertos.</response>
+        /// <response code="500">Error interno del servidor al procesar la solicitud.</response>
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {

@@ -41,7 +41,8 @@ namespace UrbanGarden.Api.Controllers
             {
                 ID = d.ID,
                 Name = d.Name,
-                CreatedAt = d.CreatedAt
+                CreatedAt = d.CreatedAt,
+                LastSeenAt = d.LastSeenAt
             }).ToList();
             return Ok(devicesDto);
         }
@@ -66,7 +67,8 @@ namespace UrbanGarden.Api.Controllers
             {
                 ID = device.ID,
                 Name = device.Name,
-                CreatedAt = device.CreatedAt
+                CreatedAt = device.CreatedAt,
+                LastSeenAt = device.LastSeenAt
             };
             return Ok(deviceDto);
         }
@@ -76,6 +78,10 @@ namespace UrbanGarden.Api.Controllers
         /// </summary>
         /// <param name="device">Información del dispositivo a registrar.</param>
         /// <returns>Información del dispositivo registrado, incluyendo su API Key.</returns>
+        /// <response code="201">Dispositivo registrado exitosamente.</response>
+        /// <response code="400">Solicitud inválida, por ejemplo, si la información del dispositivo es incorrecta.</response>
+        /// <response code="401">Acceso no autorizado, por ejemplo, si la API Key es inválida.</response>
+        /// <response code="500">Error interno del servidor al procesar la solicitud.</response>
         [HttpPost("register")]
         public IActionResult Register([FromBody] RegisterDeviceDto device)
         {

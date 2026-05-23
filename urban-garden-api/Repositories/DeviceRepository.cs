@@ -30,16 +30,15 @@ namespace UrbanGarden.Api.Repositories
 
         public void Update(Device device)
         {
-            var existing = GetByMacAddress(device.MacAddress);
+            var existing = _devices.FirstOrDefault(d => d.ID == device.ID);
             if (existing == null) return;
-
             existing.Name = device.Name;
-            existing.ApiKey = device.ApiKey;
+            existing.LastSeenAt = device.LastSeenAt;
         }
 
         public void Delete(Guid id)
         {
-            var existing = GetById(id);
+            var existing = _devices.FirstOrDefault(d => d.ID == id);
             if (existing == null) return;
             _devices.Remove(existing);
         }

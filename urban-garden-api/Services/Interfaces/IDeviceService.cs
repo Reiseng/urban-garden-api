@@ -43,6 +43,13 @@ namespace UrbanGarden.Api.Services
         void Update(Guid id, UpdateDeviceDto dto);
 
         /// <summary>
+        /// Actualiza la fecha de última conexión de un dispositivo.
+        /// </summary>
+        /// <param name="device">Dispositivo a actualizar.</param>
+        /// <param name="lastSeen">Fecha de última conexión.</param>
+        void UpdateLastSeen(Device device, DateTime lastSeen);
+
+        /// <summary>
         /// Elimina un dispositivo por su ID.
         /// </summary>
         /// <param name="id">ID del dispositivo a eliminar.</param>

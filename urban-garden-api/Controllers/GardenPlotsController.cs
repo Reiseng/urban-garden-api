@@ -26,6 +26,8 @@ namespace UrbanGarden.Api.Controllers
         /// Obtiene todos los huertos urbanos disponibles.
         /// </summary>
         /// <returns>Lista de huertos.</returns>
+        /// <response code="200">Huertos obtenidos exitosamente.</response>
+        /// <response code="500">Error interno del servidor al procesar la solicitud.</response>
         [HttpGet]
         public IActionResult GetAll()
         {
@@ -58,6 +60,9 @@ namespace UrbanGarden.Api.Controllers
         /// </summary>
         /// <param name="id">ID del huerto.</param>
         /// <returns>El huerto encontrado o 404 si no existe.</returns>
+        /// <response code="200">Huerto obtenido exitosamente.</response>
+        /// <response code="404">No se encontró un huerto con el ID especificado.</response>
+        /// <response code="500">Error interno del servidor al procesar la solicitud.</response>
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
@@ -92,6 +97,9 @@ namespace UrbanGarden.Api.Controllers
         /// </summary>
         /// <param name="gardenPlot">Datos del huerto a crear.</param>
         /// <returns>El huerto creado con su ID asignado.</returns>
+        /// <response code="201">Huerto creado exitosamente.</response>
+        /// <response code="400">Solicitud inválida, por ejemplo, si faltan campos requeridos o si los datos no son válidos.</response>
+        /// <response code="500">Error interno del servidor al procesar la solicitud.</response>
         [HttpPost]
         public IActionResult Create([FromBody] CreateGardenPlotDto gardenPlot)
         {
@@ -117,6 +125,10 @@ namespace UrbanGarden.Api.Controllers
         /// <param name="id">ID del huerto a actualizar.</param>
         /// <param name="gardenPlot">Datos actualizados del huerto.</param>
         /// <returns>204 No Content si se actualiza correctamente.</returns>
+        /// <response code="204">Huerto actualizado exitosamente.</response>
+        /// <response code="400">Solicitud inválida, por ejemplo, si los datos no son válidos.</response>
+        /// <response code="404">No se encontró un huerto con el ID especificado.</response>
+        /// <response code="500">Error interno del servidor al procesar la solicitud.</response>
         [HttpPatch("{id}")]
         public IActionResult Update(int id, [FromBody] UpdateGardenPlotDto gardenPlot)
         {
@@ -136,6 +148,10 @@ namespace UrbanGarden.Api.Controllers
         /// </summary>
         /// <param name="id">ID del huerto a eliminar.</param>
         /// <returns>204 No Content si se elimina correctamente.</returns>
+        /// <response code="204">Huerto eliminado exitosamente.</response>
+        /// <response code="404">No se encontró un huerto con el ID especificado.</response>
+        /// <response code="400">Solicitud inválida, por ejemplo, si el huerto no se puede eliminar debido a que tiene un cultivo activo o cosechas asociadas.</response>
+        /// <response code="500">Error interno del servidor al procesar la solicitud.</response>
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
@@ -160,6 +176,10 @@ namespace UrbanGarden.Api.Controllers
         /// <param name="id">ID del huerto.</param>
         /// <param name="dto">Datos del cultivo a plantar.</param>
         /// <returns>204 No Content si se planta correctamente.</returns>
+        /// <response code="204">Cultivo plantado exitosamente.</response>
+        /// <response code="404">No se encontró un huerto con el ID especificado.</response>
+        /// <response code="400">Solicitud inválida, por ejemplo, si el cultivo no se puede plantar debido a que ya hay un cultivo activo o si el tipo de cultivo no es válido.</response>
+        /// <response code="500">Error interno del servidor al procesar la solicitud.</response>
         [HttpPost("{id}/plant")]
         public IActionResult PlantCrop(int id, [FromBody] PlantCropDto dto)
         {
@@ -184,6 +204,10 @@ namespace UrbanGarden.Api.Controllers
         /// <param name="id">ID del huerto.</param>
         /// <param name="dto">Datos a registrar de al cosecha.</param>
         /// <returns>204 No Content si se cosecha correctamente.</returns>
+        /// <response code="204">Cultivo cosechado exitosamente.</response>
+        /// <response code="404">No se encontró un huerto con el ID especificado.</response>
+        /// <response code="400">Solicitud inválida, por ejemplo, si el cultivo no se puede cosechar debido a que no hay un cultivo activo o si los datos de la cosecha no son válidos.</response>
+        /// <response code="500">Error interno del servidor al procesar la solicitud.</response>
         [HttpPost("{id}/harvest")]
         public IActionResult HarvestCrop(int id, [FromBody]CreateHarvestDto dto)
         {
@@ -207,6 +231,10 @@ namespace UrbanGarden.Api.Controllers
         /// </summary>
         /// <param name="id">ID del huerto.</param>
         /// <returns>204 No Content si se elimina correctamente.</returns>
+        /// <response code="204">Cultivo eliminado exitosamente.</response>
+        /// <response code="404">No se encontró un huerto con el ID especificado.</response>
+        /// <response code="400">Solicitud inválida, por ejemplo, si el cultivo no se puede eliminar debido a que no hay un cultivo activo o si el huerto tiene cosechas asociadas al cultivo.</response>
+        /// <response code="500">Error interno del servidor al procesar la solicitud.</response>
         [HttpDelete("{id}/crop")]
         public IActionResult RemoveCrop(int id)
         {
@@ -231,6 +259,10 @@ namespace UrbanGarden.Api.Controllers
         /// <param name="id">ID del huerto.</param>
         /// <param name="dto"></param>
         /// <returns>204 No Content si se actualiza correctamente.</returns>
+        /// <response code="204">Estado del cultivo actualizado exitosamente.</response>
+        /// <response code="404">No se encontró un huerto con el ID especificado.</response>
+        /// <response code="400">Solicitud inválida, por ejemplo, si el estado no es válido o si no hay un cultivo activo en el huerto.</response>
+        /// <response code="500">Error interno del servidor al procesar la solicitud.</response>
         [HttpPatch("{id}/crop/status")]
         public IActionResult UpdateStatus(int id, UpdatePlantedCropDto dto)
         {
@@ -248,6 +280,15 @@ namespace UrbanGarden.Api.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        /// <summary>
+        /// Obtiene las cosechas realizadas en un huerto específico.
+        /// </summary>
+        /// <param name="id">ID del huerto.</param>
+        /// <returns>Lista de cosechas realizadas en el huerto.</returns>
+        /// <response code="200">Cosechas obtenidas exitosamente.</response>
+        /// <response code="404">No se encontró un huerto con el ID especificado.</response>
+        /// <response code="500">Error interno del servidor al procesar la solicitud.</response>
         [HttpGet("{id}/harvests")]
         public IActionResult GetHarvests(int id)
         {

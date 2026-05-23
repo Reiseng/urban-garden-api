@@ -26,6 +26,7 @@ builder.Services.AddSingleton<IGardenPlotRepository, GardenPlotRepository>();
 builder.Services.AddSingleton<IPlantedCropRepository, PlantedCropRepository>();
 builder.Services.AddSingleton<IHarvestRepository, HarvestRepository>();
 builder.Services.AddSingleton<IDeviceRepository, DeviceRepository>();
+builder.Services.AddSingleton<ISensorDataRepository, SensorDataRepository>();
 
 // Services
 builder.Services.AddScoped<ICropTypeService, CropTypeService>();
@@ -33,6 +34,7 @@ builder.Services.AddScoped<IGardenPlotService, GardenPlotService>();
 builder.Services.AddScoped<IPlantedCropService, PlantedCropService>();
 builder.Services.AddScoped<IHarvestService, HarvestService>();
 builder.Services.AddSingleton<IDeviceService, DeviceService>();
+builder.Services.AddSingleton<ISensorDataService, SensorDataService>();
 
 // MQTT
 builder.Services.AddSingleton<IMqttService, MqttClientService>( provider => new MqttClientService(mqttBrokerIp, mqttBrokerPort));
