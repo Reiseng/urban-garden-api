@@ -11,9 +11,9 @@ namespace UrbanGarden.Api.Services
         /// Guarda los datos de los sensores de humedad del suelo para un dispositivo específico.
         /// </summary>
         /// <param name="deviceId">El ID del dispositivo.</param>
-        /// <param name="moistureValues">La lista de valores de humedad.</param>
+        /// <param name="rawValues">La lista de valores brutos.</param>
         /// <param name="timestamp">La marca de tiempo.</param>
-        void SaveSoilSensorData(Guid deviceId, List<double> moistureValues, DateTime timestamp);
+        void SaveSoilSensorData(Guid deviceId, List<double> rawValues, DateTime timestamp);
         /// <summary>
         /// Obtiene los datos más recientes de los sensores de humedad del suelo para un dispositivo específico.
         /// </summary>

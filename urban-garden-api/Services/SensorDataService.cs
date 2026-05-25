@@ -13,17 +13,17 @@ namespace UrbanGarden.Api.Services
             _deviceService = deviceService;
             _sensorDataRepository = sensorDataRepository;
         }
-        public void SaveSoilSensorData(Guid deviceId, List<double> moistureValues, DateTime timestamp)
+        public void SaveSoilSensorData(Guid deviceId, List<double> rawValues, DateTime timestamp)
         {
             var device = ValidateDevice(deviceId);
             
-            ValidateMoistureValues(moistureValues);
+            ValidateRawValues(rawValues);
 
             ValidateTimestamp(timestamp);
 
             _deviceService.UpdateLastSeen(device, DateTime.UtcNow);
 
-            _sensorDataRepository.SaveSoilSensorData(deviceId, moistureValues, timestamp);
+            _sensorDataRepository.SaveSoilSensorData(deviceId, rawValues, timestamp);
         }
         public SoilSensorReadingsDto GetLatestSoilSensorData(Guid deviceId)
         {
@@ -76,19 +76,18 @@ namespace UrbanGarden.Api.Services
             return existingDevice;
         }
 
-        private static void ValidateMoistureValues(
-            List<double> moistureValues)
+        private static void ValidateRawValues(List<double> rawValues)
         {
-            if (moistureValues == null || moistureValues.Count == 0)
+            if (rawValues == null || rawValues.Count == 0)
             {
                 throw new ArgumentException(
-                    "Moisture values cannot be null or empty");
+                    "Raw values cannot be null or empty");
             }
 
-            if (moistureValues.Any(v => v < 0 || v > 100))
+            if (rawValues.Any(v => v < 0 || v > 4095))
             {
                 throw new ArgumentException(
-                    "Moisture values must be between 0 and 100");
+                    "Raw values must be between 0 and 4095");
             }
         }
         private static void ValidateTimestamp(DateTime timestamp)

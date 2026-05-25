@@ -22,8 +22,8 @@ namespace UrbanGarden.Api.Infrastructure.MQTT.Services
             var data = JsonSerializer.Deserialize<SoilSensorDto>(payload);
             var device = ValidateDevice(topic, payload);
             if (device == null) return Task.CompletedTask;
-            Console.WriteLine($"ID del dispositivo: {device.ID} Humedad: {string.Join(", ", data?.HumidityValues ?? [])} Fecha: {data?.Timestamp}");
-            _sensorDataService.SaveSoilSensorData(device.ID, data?.HumidityValues ?? new List<double>(), data?.Timestamp ?? DateTime.UtcNow);
+            Console.WriteLine($"ID del dispositivo: {device.ID} Humedad Raw: {string.Join(", ", data?.RawValues ?? [])} Fecha: {data?.Timestamp}");
+            _sensorDataService.SaveSoilSensorData(device.ID, data?.RawValues ?? new List<double>(), data?.Timestamp ?? DateTime.UtcNow);
             return Task.CompletedTask;
         }
 
