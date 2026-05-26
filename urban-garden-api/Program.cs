@@ -7,6 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 var mqttBrokerIp = builder.Configuration["MQTT:BrokerIP"];
 var mqttBrokerPort = builder.Configuration["MQTT:BrokerPort"];
 
+builder.WebHost.UseUrls("http://0.0.0.0:5169");
+
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
