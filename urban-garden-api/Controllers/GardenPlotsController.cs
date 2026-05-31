@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualBasic;
 using UrbanGarden.Api.Models.Dtos;
 using UrbanGarden.Api.Models.Entities;
 using UrbanGarden.Api.Services;
@@ -43,14 +44,15 @@ namespace UrbanGarden.Api.Controllers
                     Street = g.Location.Street,
                     State = g.Location.State
                     },
-                ActiveCrop = g.ActiveCrop != null
-                ? new PlantedCropDto
-                {
-                    Id = g.ActiveCrop.Id,
-                    CropTypeId = g.ActiveCrop.CropTypeId,
-                    PlantedAt = g.ActiveCrop.PlantedAt,
-                    State = g.ActiveCrop.State
-                }: null
+                ActiveCrop = g.ActiveCrop != null && g.ActiveCrop.Any()
+                ? g.ActiveCrop.Select(c => new PlantedCropDto
+                    {
+                        Id = c.Id,
+                        CropTypeId = c.CropTypeId,
+                        PlantedAt = c.PlantedAt,
+                        State = c.State
+                    }).ToList()
+                : null
             });
             return Ok(gardenPlotsDto);
         }
@@ -67,8 +69,9 @@ namespace UrbanGarden.Api.Controllers
         public IActionResult GetById(int id)
         {
             var gardenPlot = _gardenPlotService.GetById(id);
-            var gardenPlotDto = gardenPlot != null 
-            ? new GardenPlotDto
+            if (gardenPlot == null) return NotFound();
+
+            var gardenPlotDto = new GardenPlotDto
             {
                 ID = gardenPlot.ID,
                 Name = gardenPlot.Name,
@@ -79,16 +82,16 @@ namespace UrbanGarden.Api.Controllers
                     Street = gardenPlot.Location.Street,
                     State = gardenPlot.Location.State
                     },
-                ActiveCrop = gardenPlot.ActiveCrop != null
-                ? new PlantedCropDto
-                {
-                    Id = gardenPlot.ActiveCrop.Id,
-                    CropTypeId = gardenPlot.ActiveCrop.CropTypeId,
-                    PlantedAt = gardenPlot.ActiveCrop.PlantedAt,
-                    State = gardenPlot.ActiveCrop.State
-                }: null
-            }:null;
-            if (gardenPlot == null) return NotFound();
+                ActiveCrop = gardenPlot.ActiveCrop != null && gardenPlot.ActiveCrop.Any()
+                    ? gardenPlot.ActiveCrop.Select(c => new PlantedCropDto
+                        {
+                            Id = c.Id,
+                            CropTypeId = c.CropTypeId,
+                            PlantedAt = c.PlantedAt,
+                            State = c.State
+                        }).ToList()
+                    : null
+            };
             return Ok(gardenPlotDto);
         }
 
@@ -230,17 +233,18 @@ namespace UrbanGarden.Api.Controllers
         /// Elimina el cultivo activo de un huerto.
         /// </summary>
         /// <param name="id">ID del huerto.</param>
+        /// <param name="cropid">ID del cultivo.</param>
         /// <returns>204 No Content si se elimina correctamente.</returns>
         /// <response code="204">Cultivo eliminado exitosamente.</response>
         /// <response code="404">No se encontró un huerto con el ID especificado.</response>
         /// <response code="400">Solicitud inválida, por ejemplo, si el cultivo no se puede eliminar debido a que no hay un cultivo activo o si el huerto tiene cosechas asociadas al cultivo.</response>
         /// <response code="500">Error interno del servidor al procesar la solicitud.</response>
-        [HttpDelete("{id}/crop")]
-        public IActionResult RemoveCrop(int id)
+        [HttpDelete("{id}/crop/{cropid}")]
+        public IActionResult RemoveCrop(int id,int cropid)
         {
             try
             {
-                _gardenPlotService.RemoveCrop(id);
+                _gardenPlotService.RemoveCrop(id, cropid);
                 return NoContent();
             }
             catch (KeyNotFoundException)

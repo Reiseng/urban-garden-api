@@ -18,6 +18,7 @@ namespace UrbanGarden.Api.Models.Dtos
     }
     public class UpdatePlantedCropDto
     {
+        public int plantID { get; set; }
         public CropStatus State { get; set; }
     }
 }

@@ -102,7 +102,7 @@ namespace UrbanGarden.Api.Services
         public void PlantCrop(int gardenPlotId, int cropTypeId)
         {
             var gardenPlot = _gardenPlotRepository.GetById(gardenPlotId) ?? throw new KeyNotFoundException("Garden plot not found");
-            if (gardenPlot.ActiveCrop != null && gardenPlot.ActiveCrop.State != CropStatus.Withered) throw new InvalidOperationException("Garden plot already has an active crop");
+            if (gardenPlot.ActiveCrop != null && gardenPlot.ActiveCrop.Find(c => c.CropTypeId == cropTypeId)?.State == CropStatus.Withered) throw new InvalidOperationException("Cannot plant the same crop type until the withered crop is removed");
             var plantedCrop = new PlantedCrop
             {
                 CropTypeId = cropTypeId,
@@ -112,7 +112,8 @@ namespace UrbanGarden.Api.Services
             };
 
             _plantedCropService.Add(plantedCrop);
-            gardenPlot.ActiveCrop = plantedCrop;
+            gardenPlot.ActiveCrop ??= [];
+            gardenPlot.ActiveCrop.Add(plantedCrop);
             _gardenPlotRepository.Update(gardenPlot);
         }
 
@@ -127,13 +128,15 @@ namespace UrbanGarden.Api.Services
         {
             var gardenPlot = _gardenPlotRepository.GetById(gardenPlotId) ?? throw new KeyNotFoundException("Garden plot not found");
             if (dto.Quantity <= 0) throw new InvalidOperationException("Quantity need to be a positive value.");
-            if (gardenPlot.ActiveCrop == null || gardenPlot.ActiveCrop.State != CropStatus.ReadyForHarvest) throw new InvalidOperationException("No crop ready to harvest in this garden plot");
-            var shouldRemove = _plantedCropService.Harvest(gardenPlot.ActiveCrop.Id, dto.Quantity);
+            if (gardenPlot.ActiveCrop == null || gardenPlot.ActiveCrop.Find(c=> c.Id == dto.cropId)?.State != CropStatus.ReadyForHarvest) throw new InvalidOperationException("No crop ready to harvest in this garden plot");
+            var shouldRemove = _plantedCropService.Harvest(gardenPlot.ActiveCrop.Find(c=> c.Id == dto.cropId)!.Id, dto.Quantity);
 
             if (shouldRemove)
             {
-                _plantedCropService.Delete(gardenPlot.ActiveCrop.Id);
-                gardenPlot.ActiveCrop = null;
+                var removeCrop = gardenPlot.ActiveCrop.Find(c => c.Id == dto.cropId)
+                    ?? throw new InvalidOperationException("Crop not found in this garden plot");
+                _plantedCropService.Delete(removeCrop.Id);
+                gardenPlot.ActiveCrop.Remove(removeCrop);
                 _gardenPlotRepository.Update(gardenPlot);
             }
         }
@@ -142,14 +145,17 @@ namespace UrbanGarden.Api.Services
         /// Elimina el cultivo activo de un huerto.
         /// </summary>
         /// <param name="gardenPlotId">ID del huerto.</param>
+        /// <param name="cropId" >ID del cultivo a remover</param>
         /// <exception cref="KeyNotFoundException">Thrown when the garden plot is not found.</exception>
         /// <exception cref="InvalidOperationException">Thrown when there is no active crop in the garden plot.</exception>
-        public void RemoveCrop(int gardenPlotId)
+        public void RemoveCrop(int gardenPlotId, int cropId)
         {
             var gardenPlot = _gardenPlotRepository.GetById(gardenPlotId) ?? throw new KeyNotFoundException("Garden plot not found");
             if (gardenPlot.ActiveCrop == null) throw new InvalidOperationException("No active crop in this garden plot");
-            _plantedCropService.Delete(gardenPlot.ActiveCrop.Id);
-            gardenPlot.ActiveCrop = null;
+            var removeCrop = gardenPlot.ActiveCrop.Find(c => c.Id == cropId)
+                ?? throw new InvalidOperationException("Crop not found in this garden plot");
+            _plantedCropService.Delete(removeCrop.Id);
+            gardenPlot.ActiveCrop.Remove(removeCrop);
             _gardenPlotRepository.Update(gardenPlot);
         }
         /// <summary>
@@ -163,16 +169,16 @@ namespace UrbanGarden.Api.Services
         {
             var gardenPlot = _gardenPlotRepository.GetById(gardenPlotId) 
                 ?? throw new KeyNotFoundException("Garden plot not found");
-            if (gardenPlot.ActiveCrop == null) 
+            if (gardenPlot.ActiveCrop == null || gardenPlot.ActiveCrop.Count <= 0) 
                 throw new InvalidOperationException("No active crop in this garden plot");
-            if (gardenPlot.ActiveCrop.State == dto.State) 
+            if (gardenPlot.ActiveCrop.Find(c=> c.Id == dto.plantID)?.State == dto.State) 
                 throw new InvalidOperationException("The crop is already in the specified state.");
-            if (!IsValidTransition(gardenPlot.ActiveCrop.State, dto.State))
+            if (!IsValidTransition(gardenPlot.ActiveCrop.Find(c=> c.Id == dto.plantID)!.State, dto.State))
                 throw new InvalidOperationException("Invalid state transition.");   
-            if (gardenPlot.ActiveCrop.State == CropStatus.Withered) 
+            if (gardenPlot.ActiveCrop.Find(c=> c.Id == dto.plantID)?.State == CropStatus.Withered) 
                 throw new InvalidOperationException("Withered crops cannot be updated. Please remove the crop from the plot.");
-            gardenPlot.ActiveCrop.State = dto.State;
-            _plantedCropService.Update(gardenPlot.ActiveCrop.Id, dto.State);
+            gardenPlot.ActiveCrop.Find(c=> c.Id == dto.plantID)!.State = dto.State;
+            _plantedCropService.Update(gardenPlot.ActiveCrop.Find(c=> c.Id == dto.plantID)!.Id, dto.State);
             _gardenPlotRepository.Update(gardenPlot);
         }
         public IEnumerable<Harvest> GetHarvests(int gardenPlotId)

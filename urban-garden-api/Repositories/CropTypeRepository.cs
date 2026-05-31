@@ -29,6 +29,7 @@ public class CropTypeRepository : ICropTypeRepository
 
         existing.Name = cropType.Name;
         existing.Season = cropType.Season;
+        existing.IsPerennial = cropType.IsPerennial;
         existing.Disponible = cropType.Disponible;
     }
 

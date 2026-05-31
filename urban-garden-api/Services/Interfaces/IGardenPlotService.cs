@@ -58,7 +58,7 @@ namespace UrbanGarden.Api.Services
         /// Elimina el cultivo activo de un huerto.
         /// </summary>
         /// <param name="gardenPlotId">ID del huerto.</param>
-        void RemoveCrop(int gardenPlotId);
+        void RemoveCrop(int gardenPlotId, int cropId);
 
         /// <summary>
         /// Actualiza el estado del cultivo activo de un huerto.

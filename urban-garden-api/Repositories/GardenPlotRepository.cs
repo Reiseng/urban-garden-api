@@ -19,7 +19,10 @@ namespace UrbanGarden.Api.Repositories
         public void Add(GardenPlot gardenPlot)
         {
             gardenPlot.ID = _gardenPlots.Count > 0 ? _gardenPlots.Max(gp => gp.ID) + 1 : 1;
-            if (gardenPlot.ActiveCrop != null) gardenPlot.ActiveCrop.GardenPlotId = gardenPlot.ID;
+            if (gardenPlot.ActiveCrop != null && gardenPlot.ActiveCrop.Count > 0)
+            {
+              gardenPlot.ActiveCrop.ForEach(c=> c.GardenPlotId = gardenPlot.ID);  
+            }
             _gardenPlots.Add(gardenPlot);
         }
 

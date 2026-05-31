@@ -39,6 +39,7 @@ namespace UrbanGarden.Api.Controllers
                 ID = c.ID,
                 Name = c.Name,
                 Season = c.Season,
+                IsPerennial = c.IsPerennial,
                 Disponible = c.Disponible
             }).ToList();
 
@@ -67,6 +68,7 @@ namespace UrbanGarden.Api.Controllers
                 ID = cropType.ID,
                 Name = cropType.Name,
                 Season = cropType.Season,
+                IsPerennial = cropType.IsPerennial,
                 Disponible = cropType.Disponible
             };
 
@@ -92,6 +94,7 @@ namespace UrbanGarden.Api.Controllers
             {
                 Name = createDto.Name,
                 Season = createDto.Season ?? new List<Season> { Season.YearRound },
+                IsPerennial = createDto.IsPerennial,
                 Disponible = createDto.Disponible ?? true
             };
 
