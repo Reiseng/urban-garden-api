@@ -8,5 +8,6 @@ namespace UrbanGarden.Api.Models.Entities
         public Direction Location { get; set; } = new Direction();
         public List<PlantedCrop>? ActiveCrop { get; set; }
         //public List<Task> Tasks { get; set; } = new List<Task>();
+        public List<int> Devices { get; set; } = new List<int>();
     }
 }

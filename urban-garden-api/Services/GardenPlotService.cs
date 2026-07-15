@@ -200,5 +200,23 @@ namespace UrbanGarden.Api.Services
                 _ => false
             };
         }
+        public void AddDevice(int gardenPlotId, int deviceId)
+        {
+            var gardenPlot = _gardenPlotRepository.GetById(gardenPlotId) 
+                ?? throw new KeyNotFoundException("Garden plot not found");
+            gardenPlot.Devices ??= [];
+            if (gardenPlot.Devices.Contains(deviceId)) throw new InvalidOperationException("Device already added to this garden plot");
+            gardenPlot.Devices.Add(deviceId);
+            _gardenPlotRepository.Update(gardenPlot);
+        }
+        public void RemoveDevice(int gardenPlotId, int deviceId)
+        {
+            var gardenPlot = _gardenPlotRepository.GetById(gardenPlotId) 
+                ?? throw new KeyNotFoundException("Garden plot not found");
+            if (gardenPlot.Devices == null) throw new InvalidOperationException("No devices found in this garden plot");
+            if (!gardenPlot.Devices.Contains(deviceId)) throw new InvalidOperationException("Device not found in this garden plot");
+            gardenPlot.Devices.Remove(deviceId);
+            _gardenPlotRepository.Update(gardenPlot);
+        }
     }
 }

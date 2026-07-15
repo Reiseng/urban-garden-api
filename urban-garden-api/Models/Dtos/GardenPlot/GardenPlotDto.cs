@@ -10,5 +10,6 @@ namespace UrbanGarden.Api.Models.Dtos
         public DirectionDto Location { get; set; } = new DirectionDto();
         public List<PlantedCropDto>? ActiveCrop { get; set; }
         //public List<TaskDto> Tasks { get; set; } = new();
+        public List<int> Devices { get; set; } = new List<int>();
     }
 }

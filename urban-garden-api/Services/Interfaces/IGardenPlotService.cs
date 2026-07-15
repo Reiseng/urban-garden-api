@@ -58,6 +58,7 @@ namespace UrbanGarden.Api.Services
         /// Elimina el cultivo activo de un huerto.
         /// </summary>
         /// <param name="gardenPlotId">ID del huerto.</param>
+        /// <param name="cropId">ID del cultivo a remover </param>
         void RemoveCrop(int gardenPlotId, int cropId);
 
         /// <summary>
@@ -67,6 +68,25 @@ namespace UrbanGarden.Api.Services
         /// <param name="dto">Datos a actualizar del cultivo activo.</param>
         void UpdateStatus(int gardenPlotId, UpdatePlantedCropDto dto);
 
+        /// <summary>
+        /// Obtiene el historial de cosechas de un huerto.
+        /// </summary>
+        /// <param name="gardenPlotId">ID del huerto.</param>
+        /// <returns>Enumerable de cosechas.</returns>
         IEnumerable<Harvest> GetHarvests(int gardenPlotId);
+
+        /// <summary>
+        /// Agrega un dispositivo de monitoreo a un huerto.
+        /// </summary>
+        /// <param name="gardenPlotId">ID del huerto.</param>
+        /// <param name="deviceId">ID del dispositivo.</param>
+        void AddDevice(int gardenPlotId, int deviceId);
+
+        /// <summary>
+        /// Elimina un dispositivo de monitoreo de un huerto.
+        /// </summary>
+        /// <param name="gardenPlotId">ID del huerto.</param>
+        /// <param name="deviceId">ID del dispositivo.</param>
+        void RemoveDevice(int gardenPlotId, int deviceId);
     }
 }

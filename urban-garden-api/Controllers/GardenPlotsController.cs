@@ -14,13 +14,15 @@ namespace UrbanGarden.Api.Controllers
     public class GardenPlotsController : ControllerBase
     {
         private readonly IGardenPlotService _gardenPlotService;
+        private readonly ICropTypeService _cropTypeService;
         /// <summary>
         /// Constructor del controlador de huertos.
         /// </summary>
         /// <param name="gardenPlotService">Servicio de huertos.</param>
-        public GardenPlotsController(IGardenPlotService gardenPlotService)
+        public GardenPlotsController(IGardenPlotService gardenPlotService, ICropTypeService cropTypeService)
         {
             _gardenPlotService = gardenPlotService;
+            _cropTypeService = cropTypeService;
         }
 
         /// <summary>
@@ -49,6 +51,7 @@ namespace UrbanGarden.Api.Controllers
                     {
                         Id = c.Id,
                         CropTypeId = c.CropTypeId,
+                        CropName = _cropTypeService.GetById(c.CropTypeId)?.Name ?? string.Empty,
                         PlantedAt = c.PlantedAt,
                         State = c.State
                     }).ToList()
@@ -87,6 +90,7 @@ namespace UrbanGarden.Api.Controllers
                         {
                             Id = c.Id,
                             CropTypeId = c.CropTypeId,
+                            CropName = _cropTypeService.GetById(c.CropTypeId)?.Name ?? string.Empty,
                             PlantedAt = c.PlantedAt,
                             State = c.State
                         }).ToList()
@@ -308,6 +312,60 @@ namespace UrbanGarden.Api.Controllers
                     Date = h.Date
                 });
                 return Ok(harvests);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+            /// <summary>
+            /// Agrega un dispositivo de monitoreo a un huerto específico.
+            /// </summary>
+            /// <param name="id">ID del huerto.</param>
+            /// <param name="dto">Datos del dispositivo a agregar.</param>
+            /// <returns>204 No Content si se agrega correctamente.</returns>
+            /// <response code="204">Dispositivo agregado exitosamente.</response>
+            /// <response code="404">No se encontró un huerto con el ID especificado.</response>
+            /// <response code="400">Solicitud inválida, por ejemplo, si los datos del dispositivo no son válidos o si el huerto ya tiene un dispositivo del mismo tipo.</response>
+            /// <response code="500">Error interno del servidor al procesar la solicitud.</response>
+        [HttpPost("{id}/devices")]
+        public IActionResult AddDevice(int id, [FromBody] AddPlotDeviceDto dto)
+        {
+            try
+            {
+                _gardenPlotService.AddDevice(id, dto.DeviceId);
+                return NoContent();
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        /// <summary>
+        /// Elimina un dispositivo de monitoreo de un huerto específico.
+        /// </summary>
+        /// <param name="id">ID del huerto.</param>
+        /// <param name="deviceId">ID del dispositivo a eliminar.</param>
+        /// <returns>204 No Content si se elimina correctamente.</returns>
+        /// <response code="204">Dispositivo eliminado exitosamente.</response>
+        /// <response code="404">No se encontró un huerto con el ID especificado o el dispositivo no existe.</response>
+        /// <response code="400">Solicitud inválida, por ejemplo, si el dispositivo no se puede eliminar debido a que no existe o si el huerto no tiene un dispositivo con el ID especificado.</response>
+        /// <response code="500">Error interno del servidor al procesar la solicitud.</response>
+        [HttpDelete("{id}/devices/{deviceId}")]
+        public IActionResult RemoveDevice(int id, int deviceId)
+        {
+            try
+            {
+                _gardenPlotService.RemoveDevice(id, deviceId);
+                return NoContent();
             }
             catch (KeyNotFoundException)
             {
