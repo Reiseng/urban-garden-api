@@ -1,24 +1,30 @@
 using UrbanGarden.Api.Models.Entities;
+using UrbanGarden.Api.Data;
 
 namespace UrbanGarden.Api.Repositories
 {
 public class PlantedCropRepository : IPlantedCropRepository
 {
-    private readonly List<PlantedCrop> _plantedCrops = new();
+    private readonly UrbanGardenDbContext _context;
+
+    public PlantedCropRepository(UrbanGardenDbContext context)
+    {
+        _context = context;
+    }
 
     public IEnumerable<PlantedCrop> GetAll()
     {
-        return _plantedCrops;
+        return _context.PlantedCrops.ToList();
     }
 
     public PlantedCrop? GetById(int id)
     {
-        return _plantedCrops.FirstOrDefault(c => c.Id == id);
+        return _context.PlantedCrops.FirstOrDefault(c => c.Id == id);
     }
     public void Add(PlantedCrop plantedCrop)
     {
-        plantedCrop.Id = _plantedCrops.Count > 0 ? _plantedCrops.Max(c => c.Id) + 1 : 1;
-        _plantedCrops.Add(plantedCrop);
+        _context.PlantedCrops.Add(plantedCrop);
+        _context.SaveChanges();
     }
 
     public void Update(PlantedCrop plantedCrop)
@@ -35,7 +41,8 @@ public class PlantedCropRepository : IPlantedCropRepository
     {
         var existing = GetById(id);
         if (existing == null) return;
-        _plantedCrops.Remove(existing);
+        _context.PlantedCrops.Remove(existing);
+        _context.SaveChanges();
     }
 }
 }

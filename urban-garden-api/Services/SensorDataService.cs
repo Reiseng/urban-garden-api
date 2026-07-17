@@ -28,7 +28,15 @@ namespace UrbanGarden.Api.Services
         public SoilSensorReadingsDto GetLatestSoilSensorData(Guid deviceId)
         {
             ValidateDevice(deviceId);
-            return _sensorDataRepository.GetLatestSoilSensorData(deviceId);
+            var latestData = _sensorDataRepository.GetLatestSoilSensorData(deviceId);
+
+            return new SoilSensorReadingsDto
+            {
+                DeviceID = latestData.DeviceID,
+                SensorIndex = latestData.SensorIndex,
+                Moisture = latestData.Moisture,
+                Timestamp = latestData.Timestamp
+            };
         }
         public List<SoilSensorReadingsDto> GetSoilSensorData(Guid deviceId, DateTime? from, DateTime? to, int limit)
         {
@@ -37,7 +45,15 @@ namespace UrbanGarden.Api.Services
             {
                 throw new ArgumentException("'from' cannot be greater than 'to'");
             }
-            return _sensorDataRepository.GetSoilSensorData(deviceId, from, to, limit);
+            var readings = _sensorDataRepository.GetSoilSensorData(deviceId, from, to, limit);
+            
+            return new List<SoilSensorReadingsDto>(readings.Select(r => new SoilSensorReadingsDto
+            {
+                DeviceID = r.DeviceID,
+                SensorIndex = r.SensorIndex,
+                Moisture = r.Moisture,
+                Timestamp = r.Timestamp
+            }));
         }
         public void SaveTemperatureSensorData(Guid deviceId, double temperature, double humidity, DateTime timestamp)
         {
@@ -55,7 +71,14 @@ namespace UrbanGarden.Api.Services
         public TemperatureSensorReadingsDto GetLatestTemperatureSensorData(Guid deviceId)
         {
             ValidateDevice(deviceId);
-            return _sensorDataRepository.GetLatestTemperatureSensorData(deviceId);
+            var latestData = _sensorDataRepository.GetLatestTemperatureSensorData(deviceId);
+            return new TemperatureSensorReadingsDto
+            {
+                DeviceID = latestData.DeviceID,
+                Temperature = latestData.Temperature,
+                Humidity = latestData.Humidity,
+                Timestamp = latestData.Timestamp
+            };
         }
         public List<TemperatureSensorReadingsDto> GetTemperatureSensorData(Guid deviceId, DateTime? from, DateTime? to, int limit)
         {
@@ -64,7 +87,14 @@ namespace UrbanGarden.Api.Services
             {
                 throw new ArgumentException("'from' cannot be greater than 'to'");
             }
-            return _sensorDataRepository.GetTemperatureSensorData(deviceId, from, to, limit);
+            var readings = _sensorDataRepository.GetTemperatureSensorData(deviceId, from, to, limit);
+            return new List<TemperatureSensorReadingsDto>(readings.Select(r => new TemperatureSensorReadingsDto
+            {
+                DeviceID = r.DeviceID,
+                Temperature = r.Temperature,
+                Humidity = r.Humidity,
+                Timestamp = r.Timestamp
+            }));
         }
         private Device ValidateDevice(Guid deviceID)
         {

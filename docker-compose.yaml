@@ -1,0 +1,59 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: urban-garden-db
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: urbangarden
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mysecretpassword
+
+    ports:
+      - 5432:5432
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: urban-garden-mqtt
+    restart: unless-stopped
+
+    ports:
+      - 1883:1883
+      - 9001:9001
+
+  api:
+    build:
+      context: .
+      dockerfile: urban-garden-api/Dockerfile
+
+    container_name: urban-garden-api
+
+    restart: unless-stopped
+
+    depends_on:
+      - postgres
+      - mosquitto
+
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+
+      ConnectionStrings__DefaultConnection: Host=postgres;Port=5432;Database=urbangarden;Username=postgres;Password=mysecretpassword
+
+      Jwt__Key: dev-jwt-key
+      Jwt__Issuer: UrbanGardenAPI
+      Jwt__Audience: UrbanGardenUsers
+
+      MQTT__BrokerIP: mosquitto
+      MQTT__BrokerPort: 1883
+
+      DeviceRegistration__Key: SECRET_KEY
+
+    ports:
+      - 5000:8080
+
+volumes:
+  postgres_data:
+  

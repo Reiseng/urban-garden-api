@@ -1,81 +1,96 @@
-using UrbanGarden.Api.Models.Dtos.Sensors;
+using UrbanGarden.Api.Models.Entities;
+using UrbanGarden.Api.Data;
 
 namespace UrbanGarden.Api.Repositories
 {
     public class SensorDataRepository : ISensorDataRepository
     {
-        private readonly List<SoilSensorReadingsDto> _soilSensorData = new();
-        private readonly List<TemperatureSensorReadingsDto> _temperatureSensorData = new();
-        public void SaveSoilSensorData(Guid deviceId, List<double> MoistureValues, DateTime timestamp)
+    private readonly UrbanGardenDbContext _context;
+
+    public SensorDataRepository(UrbanGardenDbContext context)
+    {
+        _context = context;
+    }
+    public void SaveSoilSensorData(Guid deviceId, List<double> moistureValues, DateTime timestamp)
+    {
+        var readings = new List<SoilSensorReadings>();
+
+        for (int i = 0; i < moistureValues.Count; i++)
         {
-            for (int i = 0; i < MoistureValues.Count; i++)
-            {
-                _soilSensorData.Add(new SoilSensorReadingsDto
-                {
-                    DeviceID = deviceId,
-                    SensorIndex = i,
-                    Moisture = MoistureValues[i],
-                    Timestamp = timestamp
-                });
-            }
-        }
-
-        public SoilSensorReadingsDto GetLatestSoilSensorData(Guid deviceId)
-        {
-            return _soilSensorData.Where(d => d.DeviceID == deviceId)
-                                  .OrderByDescending(d => d.Timestamp)
-                                  .FirstOrDefault() ?? new SoilSensorReadingsDto();
-        }
-
-        public List<SoilSensorReadingsDto> GetSoilSensorData(Guid deviceId, DateTime? from, DateTime? to, int limit)
-        {
-            var query = _soilSensorData.Where(d => d.DeviceID == deviceId);
-
-            if (from.HasValue)
-            {
-                query = query.Where(d => d.Timestamp >= from);
-            }
-
-            if (to.HasValue)
-            {
-                query = query.Where(d => d.Timestamp <= to);
-            }
-
-            return query.OrderByDescending(d => d.Timestamp)
-                        .Take(limit)
-                        .ToList();
-        }
-
-        public void SaveTemperatureSensorData(Guid deviceId, double temperature, double humidity, DateTime timestamp)
-        {
-            _temperatureSensorData.Add(new TemperatureSensorReadingsDto
+            readings.Add(new SoilSensorReadings
             {
                 DeviceID = deviceId,
-                Temperature = temperature,
-                Humidity = humidity,
+                SensorIndex = i,
+                Moisture = moistureValues[i],
                 Timestamp = timestamp
             });
         }
 
-        public TemperatureSensorReadingsDto GetLatestTemperatureSensorData(Guid deviceId)
+        _context.SoilSensorReadings.AddRange(readings);
+        _context.SaveChanges();
+    }
+    public SoilSensorReadings? GetLatestSoilSensorData(Guid deviceId)
+    {
+        return _context.SoilSensorReadings
+            .Where(d => d.DeviceID == deviceId)
+            .OrderByDescending(d => d.Timestamp)
+            .FirstOrDefault();
+    }
+    public List<SoilSensorReadings> GetSoilSensorData(Guid deviceId, DateTime? from, DateTime? to, int limit)
+    {
+        var query = _context.SoilSensorReadings
+            .Where(d => d.DeviceID == deviceId);
+
+        if(from.HasValue)
         {
-            return _temperatureSensorData.Where(d => d.DeviceID == deviceId)
-                                          .OrderByDescending(d => d.Timestamp)
-                                          .FirstOrDefault() ?? new TemperatureSensorReadingsDto();
+            query = query.Where(d => d.Timestamp >= from.Value);
         }
 
-        public List<TemperatureSensorReadingsDto> GetTemperatureSensorData(Guid deviceId, DateTime? from, DateTime? to, int limit)
+
+        if(to.HasValue)
         {
-            var query = _temperatureSensorData.Where(d => d.DeviceID == deviceId);
+            query = query.Where(d => d.Timestamp <= to.Value);
+        }
+
+        return query
+            .OrderByDescending(d => d.Timestamp)
+            .Take(limit)
+            .ToList();
+    }
+    public void SaveTemperatureSensorData(Guid deviceId, double temperature, double humidity, DateTime timestamp)
+    {
+        var reading = new TemperatureSensorReadings
+        {
+            DeviceID = deviceId,
+            Temperature = temperature,
+            Humidity = humidity,
+            Timestamp = timestamp
+        };
+
+        _context.TemperatureSensorReadings.Add(reading);
+        _context.SaveChanges();
+    }
+
+    public TemperatureSensorReadings? GetLatestTemperatureSensorData(Guid deviceId)
+    {
+        return _context.TemperatureSensorReadings
+            .Where(d => d.DeviceID == deviceId)
+            .OrderByDescending(d => d.Timestamp)
+            .FirstOrDefault();
+    }
+
+        public List<TemperatureSensorReadings> GetTemperatureSensorData(Guid deviceId, DateTime? from, DateTime? to, int limit)
+        {
+            var query = _context.TemperatureSensorReadings.Where(d => d.DeviceID == deviceId);
 
             if (from.HasValue)
             {
-                query = query.Where(d => d.Timestamp >= from);
+                query = query.Where(d => d.Timestamp >= from.Value);
             }
 
             if (to.HasValue)
             {
-                query = query.Where(d => d.Timestamp <= to);
+                query = query.Where(d => d.Timestamp <= to.Value);
             }
 
             return query.OrderByDescending(d => d.Timestamp)

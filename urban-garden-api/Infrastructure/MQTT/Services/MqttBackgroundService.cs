@@ -3,18 +3,20 @@ using UrbanGarden.Api.Infrastructure.MQTT.Services;
 public class MqttHostedService : BackgroundService
 {
     private readonly IMqttService _mqttService;
-    private readonly ISensorsService _sensorsService;
+    private readonly IServiceScopeFactory _scopeFactory;
 
-    public MqttHostedService(IMqttService mqttService, ISensorsService sensorsService)
+    public MqttHostedService(IMqttService mqttService, IServiceScopeFactory scopeFactory)
     {
         _mqttService = mqttService;
-        _sensorsService = sensorsService;
+        _scopeFactory = scopeFactory;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         _mqttService.OnMessageReceived += async (topic, payload) =>
         {
+            using var scope = _scopeFactory.CreateScope();
+            var _sensorsService = scope.ServiceProvider.GetRequiredService<ISensorsService>();
             if (topic.EndsWith("/sensors/soil"))
             {
                 await _sensorsService.ProcessSoilSensorData(topic, payload);

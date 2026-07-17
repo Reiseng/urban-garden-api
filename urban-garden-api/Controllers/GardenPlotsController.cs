@@ -19,6 +19,7 @@ namespace UrbanGarden.Api.Controllers
         /// Constructor del controlador de huertos.
         /// </summary>
         /// <param name="gardenPlotService">Servicio de huertos.</param>
+        /// <param name="cropTypeService">Servicio de tipos de cultivo.</param>
         public GardenPlotsController(IGardenPlotService gardenPlotService, ICropTypeService cropTypeService)
         {
             _gardenPlotService = gardenPlotService;
@@ -46,16 +47,8 @@ namespace UrbanGarden.Api.Controllers
                     Street = g.Location.Street,
                     State = g.Location.State
                     },
-                ActiveCrop = g.ActiveCrop != null && g.ActiveCrop.Any()
-                ? g.ActiveCrop.Select(c => new PlantedCropDto
-                    {
-                        Id = c.Id,
-                        CropTypeId = c.CropTypeId,
-                        CropName = _cropTypeService.GetById(c.CropTypeId)?.Name ?? string.Empty,
-                        PlantedAt = c.PlantedAt,
-                        State = c.State
-                    }).ToList()
-                : null
+                PlantedCrops = g.PlantedCrops,
+                Devices = g.Devices
             });
             return Ok(gardenPlotsDto);
         }
@@ -85,16 +78,8 @@ namespace UrbanGarden.Api.Controllers
                     Street = gardenPlot.Location.Street,
                     State = gardenPlot.Location.State
                     },
-                ActiveCrop = gardenPlot.ActiveCrop != null && gardenPlot.ActiveCrop.Any()
-                    ? gardenPlot.ActiveCrop.Select(c => new PlantedCropDto
-                        {
-                            Id = c.Id,
-                            CropTypeId = c.CropTypeId,
-                            CropName = _cropTypeService.GetById(c.CropTypeId)?.Name ?? string.Empty,
-                            PlantedAt = c.PlantedAt,
-                            State = c.State
-                        }).ToList()
-                    : null
+                PlantedCrops = gardenPlot.PlantedCrops,
+                Devices = gardenPlot.Devices
             };
             return Ok(gardenPlotDto);
         }
@@ -306,8 +291,6 @@ namespace UrbanGarden.Api.Controllers
                 var harvestsDto = harvests.Select(h => new HarvestDto
                 {
                     PlantedCropId = h.PlantedCropId,
-                    CropTypeId = h.CropTypeId,
-                    GardenPlotId = h.GardenPlotId,
                     Quantity = h.Quantity,
                     Date = h.Date
                 });
@@ -360,7 +343,7 @@ namespace UrbanGarden.Api.Controllers
         /// <response code="400">Solicitud inválida, por ejemplo, si el dispositivo no se puede eliminar debido a que no existe o si el huerto no tiene un dispositivo con el ID especificado.</response>
         /// <response code="500">Error interno del servidor al procesar la solicitud.</response>
         [HttpDelete("{id}/devices/{deviceId}")]
-        public IActionResult RemoveDevice(int id, int deviceId)
+        public IActionResult RemoveDevice(int id, Guid deviceId)
         {
             try
             {

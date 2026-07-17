@@ -34,8 +34,6 @@ namespace UrbanGarden.Api.Controllers
             var harvestsDtos = harvests.Select(h => new HarvestDto
             {
                     PlantedCropId = h.PlantedCropId,
-                    CropTypeId = h.CropTypeId,
-                    GardenPlotId = h.GardenPlotId,
                     Quantity = h.Quantity,
                     Date = h.Date
             });
@@ -57,8 +55,6 @@ namespace UrbanGarden.Api.Controllers
             ? new HarvestDto
             {
                 PlantedCropId = harvest.PlantedCropId,
-                CropTypeId = harvest.CropTypeId,
-                GardenPlotId = harvest.GardenPlotId,
                 Quantity = harvest.Quantity,
                 Date = harvest.Date
             } : null;

@@ -8,5 +8,13 @@ namespace UrbanGarden.Api.Models.Entities
         public string Name { get; set; } = null!;
         public DateTime CreatedAt { get; set; }
         public DateTime? LastSeenAt { get; set; }
+        public int GardenPlotId { get; set; }
+        public GardenPlot GardenPlot { get; set; } = null!;
+        public ICollection<SoilSensorReadings> SoilReadings { get; set; }
+            = new List<SoilSensorReadings>();
+
+
+        public ICollection<TemperatureSensorReadings> TemperatureReadings { get; set; }
+            = new List<TemperatureSensorReadings>();
     }
 }

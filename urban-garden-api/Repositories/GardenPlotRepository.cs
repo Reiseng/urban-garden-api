@@ -1,29 +1,38 @@
 using UrbanGarden.Api.Models.Entities;
+using UrbanGarden.Api.Data;
 
 namespace UrbanGarden.Api.Repositories
 {
     public class GardenPlotRepository : IGardenPlotRepository
     {
-        private readonly List<GardenPlot> _gardenPlots = new List<GardenPlot>();
+        private readonly UrbanGardenDbContext _context;
+
+        public GardenPlotRepository(UrbanGardenDbContext context)
+        {
+            _context = context;
+        }
 
         public IEnumerable<GardenPlot> GetAll()
         {
-            return _gardenPlots;
+            return _context.GardenPlots.ToList();
         }
 
         public GardenPlot? GetById(int id)
         {
-            return _gardenPlots.FirstOrDefault(gp => gp.ID == id);
+            return _context.GardenPlots.FirstOrDefault(gp => gp.ID == id);
         }
 
         public void Add(GardenPlot gardenPlot)
         {
-            gardenPlot.ID = _gardenPlots.Count > 0 ? _gardenPlots.Max(gp => gp.ID) + 1 : 1;
-            if (gardenPlot.ActiveCrop != null && gardenPlot.ActiveCrop.Count > 0)
+            if (gardenPlot.PlantedCrops != null && gardenPlot.PlantedCrops.Count > 0)
             {
-              gardenPlot.ActiveCrop.ForEach(c=> c.GardenPlotId = gardenPlot.ID);  
+                foreach (var c in gardenPlot.PlantedCrops)
+                    {
+                        c.GardenPlotId = gardenPlot.ID;
+                    }
             }
-            _gardenPlots.Add(gardenPlot);
+            _context.GardenPlots.Add(gardenPlot);
+            _context.SaveChanges();
         }
 
         public void Update(GardenPlot gardenPlot)
@@ -34,8 +43,9 @@ namespace UrbanGarden.Api.Repositories
                 existingGardenPlot.Name = gardenPlot.Name;
                 existingGardenPlot.Size = gardenPlot.Size;
                 existingGardenPlot.Location = gardenPlot.Location;
-                existingGardenPlot.ActiveCrop = gardenPlot.ActiveCrop;
+                existingGardenPlot.PlantedCrops = gardenPlot.PlantedCrops;
             }
+            _context.SaveChanges();
         }
 
         public void Delete(int id)
@@ -43,7 +53,8 @@ namespace UrbanGarden.Api.Repositories
             var gardenPlot = GetById(id);
             if (gardenPlot != null)
             {
-                _gardenPlots.Remove(gardenPlot);
+                _context.GardenPlots.Remove(gardenPlot);
+                _context.SaveChanges();
             }
         }
     }

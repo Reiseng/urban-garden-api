@@ -85,8 +85,6 @@ namespace UrbanGarden.Api.Services
             _harvestRepository.Add(new Harvest
             {
                 PlantedCropId = plantedCrop.Id,
-                GardenPlotId = plantedCrop.GardenPlotId,
-                CropTypeId = plantedCrop.CropTypeId,
                 Quantity = Quantity,
                 Date = DateTime.UtcNow
             });

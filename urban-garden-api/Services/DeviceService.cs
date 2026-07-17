@@ -11,10 +11,12 @@ namespace UrbanGarden.Api.Services
     public class DeviceService : IDeviceService
     {
         private readonly IDeviceRepository _repository;
+        private readonly string? _deviceRegistrationKey;
 
-        public DeviceService(IDeviceRepository repository)
+        public DeviceService(IDeviceRepository repository, string? deviceRegistrationKey)
         {
             _repository = repository;
+            _deviceRegistrationKey = deviceRegistrationKey;
         }
 
         public IEnumerable<Device> GetAll()
@@ -39,7 +41,7 @@ namespace UrbanGarden.Api.Services
                 throw new ArgumentException("Todos los campos son obligatorios");
             }
             device.MacAddress = device.MacAddress.Normalize().ToUpper();
-            if (device.RegistrationKey != "SECRET_KEY") // Reemplazar con una clave de registro segura o un mecanismo de validación adecuado
+            if (device.RegistrationKey != _deviceRegistrationKey) // Reemplazar con una clave de registro segura o un mecanismo de validación adecuado
             {
                 throw new UnauthorizedAccessException("Clave de registro inválida");
             }

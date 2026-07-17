@@ -2,12 +2,15 @@ using System.Text.Json.Serialization;
 using UrbanGarden.Api.Repositories;
 using UrbanGarden.Api.Services;
 using UrbanGarden.Api.Infrastructure.MQTT.Services;
+using UrbanGarden.Api.Data;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 var mqttBrokerIp = builder.Configuration["MQTT:BrokerIP"];
 var mqttBrokerPort = builder.Configuration["MQTT:BrokerPort"];
+var deviceRegistrationKey = builder.Configuration["DeviceRegistration:Key"];
 
-builder.WebHost.UseUrls("http://0.0.0.0:5169");
+builder.WebHost.UseUrls("http://0.0.0.0:8080");
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -27,6 +30,10 @@ builder.Services.AddCors(options =>
                 .AllowAnyMethod();
         });
 });
+builder.Services.AddDbContext<UrbanGardenDbContext>(options =>
+    options.UseNpgsql(
+        builder.Configuration.GetConnectionString("DefaultConnection")));
+
 builder.Services.AddSwaggerGen(options =>
 {
     var xmlFilename = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
@@ -34,24 +41,24 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 // Repositories
-builder.Services.AddSingleton<ICropTypeRepository, CropTypeRepository>();
-builder.Services.AddSingleton<IGardenPlotRepository, GardenPlotRepository>();
-builder.Services.AddSingleton<IPlantedCropRepository, PlantedCropRepository>();
-builder.Services.AddSingleton<IHarvestRepository, HarvestRepository>();
-builder.Services.AddSingleton<IDeviceRepository, DeviceRepository>();
-builder.Services.AddSingleton<ISensorDataRepository, SensorDataRepository>();
+builder.Services.AddScoped<ICropTypeRepository, CropTypeRepository>();
+builder.Services.AddScoped<IGardenPlotRepository, GardenPlotRepository>();
+builder.Services.AddScoped<IPlantedCropRepository, PlantedCropRepository>();
+builder.Services.AddScoped<IHarvestRepository, HarvestRepository>();
+builder.Services.AddScoped<IDeviceRepository, DeviceRepository>();
+builder.Services.AddScoped<ISensorDataRepository, SensorDataRepository>();
 
 // Services
 builder.Services.AddScoped<ICropTypeService, CropTypeService>();
 builder.Services.AddScoped<IGardenPlotService, GardenPlotService>();
 builder.Services.AddScoped<IPlantedCropService, PlantedCropService>();
 builder.Services.AddScoped<IHarvestService, HarvestService>();
-builder.Services.AddSingleton<IDeviceService, DeviceService>();
-builder.Services.AddSingleton<ISensorDataService, SensorDataService>();
+builder.Services.AddScoped<IDeviceService, DeviceService>(provider => new DeviceService(provider.GetRequiredService<IDeviceRepository>(), deviceRegistrationKey));
+builder.Services.AddScoped<ISensorDataService, SensorDataService>();
 
 // MQTT
-builder.Services.AddSingleton<IMqttService, MqttClientService>( provider => new MqttClientService(mqttBrokerIp, mqttBrokerPort));
-builder.Services.AddSingleton<ISensorsService, SensorsService>();
+builder.Services.AddSingleton<IMqttService, MqttClientService>(provider => new MqttClientService(mqttBrokerIp, mqttBrokerPort)
+);builder.Services.AddScoped<ISensorsService, SensorsService>();
 builder.Services.AddHostedService<MqttHostedService>();
 var app = builder.Build();
 

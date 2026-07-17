@@ -6,8 +6,8 @@ namespace UrbanGarden.Api.Models.Entities
         public required string Name { get; set; }
         public double Size { get; set; }
         public Direction Location { get; set; } = new Direction();
-        public List<PlantedCrop>? ActiveCrop { get; set; }
-        //public List<Task> Tasks { get; set; } = new List<Task>();
-        public List<int> Devices { get; set; } = new List<int>();
+        public ICollection<Device> Devices { get; set; } = new List<Device>();
+        public ICollection<PlantedCrop> PlantedCrops { get; set; } 
+            = new List<PlantedCrop>();
     }
 }

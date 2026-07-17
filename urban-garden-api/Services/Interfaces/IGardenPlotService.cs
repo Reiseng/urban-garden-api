@@ -80,13 +80,13 @@ namespace UrbanGarden.Api.Services
         /// </summary>
         /// <param name="gardenPlotId">ID del huerto.</param>
         /// <param name="deviceId">ID del dispositivo.</param>
-        void AddDevice(int gardenPlotId, int deviceId);
+        void AddDevice(int gardenPlotId, Guid deviceId);
 
         /// <summary>
         /// Elimina un dispositivo de monitoreo de un huerto.
         /// </summary>
         /// <param name="gardenPlotId">ID del huerto.</param>
         /// <param name="deviceId">ID del dispositivo.</param>
-        void RemoveDevice(int gardenPlotId, int deviceId);
+        void RemoveDevice(int gardenPlotId, Guid deviceId);
     }
 }
