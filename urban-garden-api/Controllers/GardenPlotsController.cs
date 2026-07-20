@@ -47,8 +47,29 @@ namespace UrbanGarden.Api.Controllers
                     Street = g.Location.Street,
                     State = g.Location.State
                     },
-                PlantedCrops = g.PlantedCrops,
+                PlantedCrops = g.PlantedCrops
+                    .Select(c => new PlantedCropDto
+                    {
+                        Id = c.Id,
+                        PlantedAt= c.PlantedAt,
+                        CropType = new CropTypeDto
+                        {
+                            ID = c.CropType.ID,
+                            Name = c.CropType.Name,
+                            Season = c.CropType.Season,
+                            IsPerennial = c.CropType.IsPerennial
+                        },
+                    })
+                    .ToList(),
                 Devices = g.Devices
+                    .Select(d => new DeviceDto
+                    {
+                        ID = d.ID,
+                        Name = d.Name,
+                        CreatedAt = d.CreatedAt,
+                        LastSeenAt = d.LastSeenAt
+                    })
+                    .ToList()
             });
             return Ok(gardenPlotsDto);
         }
@@ -78,8 +99,29 @@ namespace UrbanGarden.Api.Controllers
                     Street = gardenPlot.Location.Street,
                     State = gardenPlot.Location.State
                     },
-                PlantedCrops = gardenPlot.PlantedCrops,
+                PlantedCrops = gardenPlot.PlantedCrops
+                    .Select(c => new PlantedCropDto
+                    {
+                        Id = c.Id,
+                        PlantedAt= c.PlantedAt,
+                        CropType = new CropTypeDto
+                        {
+                            ID = c.CropType.ID,
+                            Name = c.CropType.Name,
+                            Season = c.CropType.Season,
+                            IsPerennial = c.CropType.IsPerennial
+                        },
+                    })
+                    .ToList(),
                 Devices = gardenPlot.Devices
+                    .Select(d => new DeviceDto
+                    {
+                        ID = d.ID,
+                        Name = d.Name,
+                        CreatedAt = d.CreatedAt,
+                        LastSeenAt = d.LastSeenAt
+                    })
+                    .ToList()
             };
             return Ok(gardenPlotDto);
         }

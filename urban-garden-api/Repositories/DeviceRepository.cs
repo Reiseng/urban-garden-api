@@ -28,6 +28,7 @@ namespace UrbanGarden.Api.Repositories
 
         public Device? Add(Device device)
         {
+            device.GardenPlotId = null; // Inicializa GardenPlotId como null
             device.ID = Guid.NewGuid(); // Genera un ID único
             device.CreatedAt = DateTime.UtcNow;
             _context.Devices.Add(device);
@@ -41,6 +42,8 @@ namespace UrbanGarden.Api.Repositories
             if (existing == null) return;
             existing.Name = device.Name;
             existing.LastSeenAt = device.LastSeenAt;
+            existing.GardenPlotId = device.GardenPlotId;
+            existing.GardenPlot = device.GardenPlot;
             _context.SaveChanges();
         }
 

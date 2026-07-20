@@ -1,5 +1,6 @@
 using UrbanGarden.Api.Models.Entities;
 using UrbanGarden.Api.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace UrbanGarden.Api.Repositories
 {
@@ -19,7 +20,11 @@ namespace UrbanGarden.Api.Repositories
 
         public GardenPlot? GetById(int id)
         {
-            return _context.GardenPlots.FirstOrDefault(gp => gp.ID == id);
+            return _context.GardenPlots
+                .Include(g => g.Devices)
+                .Include(g => g.PlantedCrops)
+                .ThenInclude(p => p.CropType)
+                .FirstOrDefault(g => g.ID == id);
         }
 
         public void Add(GardenPlot gardenPlot)
@@ -44,6 +49,7 @@ namespace UrbanGarden.Api.Repositories
                 existingGardenPlot.Size = gardenPlot.Size;
                 existingGardenPlot.Location = gardenPlot.Location;
                 existingGardenPlot.PlantedCrops = gardenPlot.PlantedCrops;
+                existingGardenPlot.Devices = gardenPlot.Devices;
             }
             _context.SaveChanges();
         }

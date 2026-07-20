@@ -13,6 +13,7 @@ namespace UrbanGarden.Api.Services
         private readonly IGardenPlotRepository _gardenPlotRepository;
         private readonly IPlantedCropService _plantedCropService;
         private readonly IHarvestService _harvestService;
+        private readonly IDeviceRepository _deviceRepository;
 
         /// <summary>
         /// Constructor del servicio de huertos.
@@ -20,11 +21,13 @@ namespace UrbanGarden.Api.Services
         /// <param name="gardenPlotRepository">Repositorio de huertos.</param>
         /// <param name="plantedCropService">Servicio de cultivos plantados.</param>
         /// <param name="harvestService">Servicio del historial de cosechas.</param>
-        public GardenPlotService(IGardenPlotRepository gardenPlotRepository, IPlantedCropService plantedCropService, IHarvestService harvestService)
+        /// <param name="deviceRepository">Repositorio de dispositivos.</param>
+        public GardenPlotService(IGardenPlotRepository gardenPlotRepository, IPlantedCropService plantedCropService, IHarvestService harvestService, IDeviceRepository deviceRepository)
         {
             _gardenPlotRepository = gardenPlotRepository;
             _plantedCropService = plantedCropService;
             _harvestService = harvestService;
+            _deviceRepository = deviceRepository;
         }
 
         /// <summary>
@@ -224,8 +227,11 @@ namespace UrbanGarden.Api.Services
                 ?? throw new KeyNotFoundException("Garden plot not found");
             gardenPlot.Devices ??= new List<Device>();
             if (gardenPlot.Devices.Any(d => d.ID == deviceId)) throw new InvalidOperationException("Device already added to this garden plot");
-            gardenPlot.Devices.Add(new Device { ID = deviceId });
-            _gardenPlotRepository.Update(gardenPlot);
+            var device = _deviceRepository.GetById(deviceId)
+                ?? throw new KeyNotFoundException("Device not found");
+            device.GardenPlotId = gardenPlotId;
+            device.GardenPlot = gardenPlot;
+            _deviceRepository.Update(device);
         }
         public void RemoveDevice(int gardenPlotId, Guid deviceId)
         {

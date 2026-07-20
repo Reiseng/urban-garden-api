@@ -8,8 +8,8 @@ namespace UrbanGarden.Api.Models.Dtos
         public required string Name { get; set; }
         public double Size { get; set; }
         public DirectionDto Location { get; set; } = new DirectionDto();
-        public ICollection<Device> Devices { get; set; } = new List<Device>();
-        public ICollection<PlantedCrop> PlantedCrops { get; set; } 
-            = new List<PlantedCrop>();
+        public ICollection<DeviceDto> Devices { get; set; } = new List<DeviceDto>();
+        public ICollection<PlantedCropDto> PlantedCrops { get; set; } 
+            = new List<PlantedCropDto>();
     }
 }

@@ -6,8 +6,8 @@ namespace UrbanGarden.Api.Models.Dtos
     public class PlantedCropDto
     {
         public int Id { get; set; }
-        public CropType CropType { get; set; } = null!;
-        public GardenPlot GardenPlot { get; set; } = null!;
+        public CropTypeDto CropType { get; set; } = null!;
+        public GardenPlotDto GardenPlot { get; set; } = null!;
         public DateTime PlantedAt { get; set; } = DateTime.UtcNow;
         public CropStatus State { get; set; } = CropStatus.Planted;
     }
