@@ -22,13 +22,16 @@ namespace UrbanGarden.Api.Infrastructure.MQTT.Services
                 .WithClientId(Guid.NewGuid().ToString())
                 .Build();
 
-            _client.ApplicationMessageReceivedAsync += async e => 
-            { 
-                var topic = e.ApplicationMessage.Topic; 
-                var payload = Encoding.UTF8.GetString(e.ApplicationMessage.Payload); 
+            _client.ApplicationMessageReceivedAsync += async e =>
+            {
+                var topic = e.ApplicationMessage.Topic;
+                var payload = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
 
-                if (OnMessageReceived != null) 
-                await OnMessageReceived.Invoke(topic, payload); };
+                if (OnMessageReceived != null)
+                {
+                    await OnMessageReceived(topic, payload);
+                }
+            };
         }
 
         public async Task Connect(CancellationToken cancellationToken)

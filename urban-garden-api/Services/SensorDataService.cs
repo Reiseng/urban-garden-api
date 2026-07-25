@@ -25,20 +25,24 @@ namespace UrbanGarden.Api.Services
 
             _sensorDataRepository.SaveSoilSensorData(deviceId, rawValues, timestamp);
         }
-        public SoilSensorReadingsDto GetLatestSoilSensorData(Guid deviceId)
+        public List<LatestSoilSensorReadingsDto> GetLatestSoilSensorData(Guid deviceId)
         {
             ValidateDevice(deviceId);
             var latestData = _sensorDataRepository.GetLatestSoilSensorData(deviceId);
             if (latestData == null)
                 return null;
-            return new SoilSensorReadingsDto
-            {
-                DeviceID = latestData.DeviceID,
-                SensorIndex = latestData.SensorIndex,
-                Moisture = latestData.Moisture,
-                Timestamp = latestData.Timestamp
-            };
-        }
+            return [.. latestData.GroupBy(r => r.Timestamp)
+                .Select(g => new LatestSoilSensorReadingsDto
+                {
+                    DeviceID = deviceId,
+                    Timestamp = g.Key,
+                    Sensors = [.. g.Select(r => new SoilSensorDto
+                    {
+                        SensorIndex = r.SensorIndex,
+                        Moisture = r.Moisture
+                    })]
+                })];
+            }
         public List<SoilSensorReadingsDto> GetSoilSensorData(Guid deviceId, DateTime? from, DateTime? to, int limit)
         {
             ValidateDevice(deviceId);
@@ -48,14 +52,14 @@ namespace UrbanGarden.Api.Services
             }
             var readings = _sensorDataRepository.GetSoilSensorData(deviceId, from, to, limit);
             if (readings == null)
-                return new List<SoilSensorReadingsDto>();
-            return new List<SoilSensorReadingsDto>(readings.Select(r => new SoilSensorReadingsDto
+                return [];
+            return [.. readings.Select(r => new SoilSensorReadingsDto
             {
                 DeviceID = r.DeviceID,
                 SensorIndex = r.SensorIndex,
                 Moisture = r.Moisture,
                 Timestamp = r.Timestamp
-            }));
+            })];
         }
         public void SaveTemperatureSensorData(Guid deviceId, double temperature, double humidity, DateTime timestamp)
         {
@@ -93,22 +97,18 @@ namespace UrbanGarden.Api.Services
             }
             var readings = _sensorDataRepository.GetTemperatureSensorData(deviceId, from, to, limit);
             if (readings == null)
-                return new List<TemperatureSensorReadingsDto>();
-            return new List<TemperatureSensorReadingsDto>(readings.Select(r => new TemperatureSensorReadingsDto
+                return [];
+            return [.. readings.Select(r => new TemperatureSensorReadingsDto
             {
                 DeviceID = r.DeviceID,
                 Temperature = r.Temperature,
                 Humidity = r.Humidity,
                 Timestamp = r.Timestamp
-            }));
+            })];
         }
         private Device ValidateDevice(Guid deviceID)
         {
-            var existingDevice = _deviceService.GetById(deviceID);
-            if (existingDevice == null)
-            {
-                throw new KeyNotFoundException($"Device with ID {deviceID} not found");
-            }
+            var existingDevice = _deviceService.GetById(deviceID) ?? throw new KeyNotFoundException($"Device with ID {deviceID} not found");
             return existingDevice;
         }
 

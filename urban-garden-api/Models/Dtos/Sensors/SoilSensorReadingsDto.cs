@@ -20,4 +20,19 @@ namespace UrbanGarden.Api.Models.Dtos.Sensors
         /// </summary>
         public DateTime Timestamp { get; set; }
     }
+    public class LatestSoilSensorReadingsDto
+    {
+        public Guid DeviceID { get; set; }
+
+        public DateTime Timestamp { get; set; }
+
+        public List<SoilSensorDto> Sensors { get; set; } = [];
+    }
+
+    public class SoilSensorDto
+    {
+        public int SensorIndex { get; set; }
+
+        public double Moisture { get; set; }
+    }
 }

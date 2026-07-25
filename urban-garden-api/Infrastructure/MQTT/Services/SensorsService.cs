@@ -23,7 +23,9 @@ namespace UrbanGarden.Api.Infrastructure.MQTT.Services
             var device = ValidateDevice(topic, payload);
             if (device == null) return Task.CompletedTask;
             Console.WriteLine($"ID del dispositivo: {device.ID} Humedad Raw: {string.Join(", ", data?.RawValues ?? [])} Fecha: {data?.Timestamp}");
-            _sensorDataService.SaveSoilSensorData(device.ID, data?.RawValues ?? new List<double>(), data?.Timestamp ?? DateTime.UtcNow);
+            var timestamp = data?.Timestamp ?? DateTime.UtcNow;
+            timestamp = DateTime.SpecifyKind(timestamp, DateTimeKind.Utc);
+            _sensorDataService.SaveSoilSensorData(device.ID, data?.RawValues ?? new List<double>(), timestamp);
             return Task.CompletedTask;
         }
 
@@ -33,7 +35,9 @@ namespace UrbanGarden.Api.Infrastructure.MQTT.Services
             var device = ValidateDevice(topic, payload);
             if (device == null) return Task.CompletedTask;
             Console.WriteLine($"ID del dispositivo: {device.ID} Temperatura: {data?.Temperature} Humedad Ambiente: {data?.Humidity} Fecha: {data?.Timestamp}");
-            _sensorDataService.SaveTemperatureSensorData(device.ID, data?.Temperature ?? 0, data?.Humidity ?? 0, data?.Timestamp ?? DateTime.UtcNow);
+            var timestamp = data?.Timestamp ?? DateTime.UtcNow;
+            timestamp = DateTime.SpecifyKind(timestamp, DateTimeKind.Utc);
+            _sensorDataService.SaveTemperatureSensorData(device.ID, data?.Temperature ?? 0, data?.Humidity ?? 0, timestamp);
             return Task.CompletedTask;
         }
 

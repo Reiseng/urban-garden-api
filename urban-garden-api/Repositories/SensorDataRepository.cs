@@ -29,12 +29,20 @@ namespace UrbanGarden.Api.Repositories
         _context.SoilSensorReadings.AddRange(readings);
         _context.SaveChanges();
     }
-    public SoilSensorReadings? GetLatestSoilSensorData(Guid deviceId)
+    public List<SoilSensorReadings> GetLatestSoilSensorData(Guid deviceId)
     {
-        return _context.SoilSensorReadings
+        var latestTimestamp = _context.SoilSensorReadings
             .Where(d => d.DeviceID == deviceId)
-            .OrderByDescending(d => d.Timestamp)
-            .FirstOrDefault();
+            .Max(d => (DateTime?)d.Timestamp);
+
+        if (latestTimestamp == null)
+            return new List<SoilSensorReadings>();
+
+        return _context.SoilSensorReadings
+            .Where(d => d.DeviceID == deviceId &&
+                        d.Timestamp == latestTimestamp)
+            .OrderBy(d => d.SensorIndex)
+            .ToList();
     }
     public List<SoilSensorReadings> GetSoilSensorData(Guid deviceId, DateTime? from, DateTime? to, int limit)
     {

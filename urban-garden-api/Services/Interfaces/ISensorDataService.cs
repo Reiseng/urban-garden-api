@@ -19,7 +19,7 @@ namespace UrbanGarden.Api.Services
         /// </summary>
         /// <param name="deviceId">El ID del dispositivo.</param>
         /// <returns>Datos de los sensores de humedad del suelo.</returns>
-        SoilSensorReadingsDto GetLatestSoilSensorData(Guid deviceId);
+        List<LatestSoilSensorReadingsDto> GetLatestSoilSensorData(Guid deviceId);
         /// <summary>
         /// Obtiene los datos de los sensores de humedad del suelo para un dispositivo específico dentro de un rango de fechas y con un límite de resultados.
         /// </summary>
