@@ -40,7 +40,7 @@ namespace UrbanGarden.Api.Services
         /// <param name="id">ID del cultivo plantado.</param>
         /// <param name="Quantity"> Cantidad en KG a cosechar (valor tipo decimal).</param>
         /// <returns>True si el cultivo debe ser eliminado, false si es perenne.</returns>
-        bool Harvest(int id, decimal Quantity);
+        void Harvest(int id, decimal Quantity);
 
         /// <summary>
         /// Elimina un cultivo plantado por su ID.

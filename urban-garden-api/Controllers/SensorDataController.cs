@@ -36,6 +36,10 @@ namespace UrbanGarden.Api.Controllers
             try
             {
                 var data = _sensorDataService.GetLatestSoilSensorData(deviceId);
+                if (data == null)
+                {
+                    return NoContent();
+                }
                 return Ok(data);
             }
             catch (Exception ex)
@@ -106,6 +110,10 @@ namespace UrbanGarden.Api.Controllers
             try
             {
                 var data = _sensorDataService.GetLatestTemperatureSensorData(deviceId);
+                if (data == null)
+                {
+                    return NoContent();
+                }
                 return Ok(data);
             }
             catch (Exception ex)

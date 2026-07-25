@@ -5,6 +5,8 @@ namespace UrbanGarden.Api.Models.Enums
         Planted,
         Growing,
         ReadyForHarvest,
-        Withered
+        Withered,
+        Harvested, 
+        Removed
     }
 }

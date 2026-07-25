@@ -71,13 +71,11 @@ namespace UrbanGarden.Api.Services
         /// </summary>
         /// <param name="id">ID del cultivo plantado.</param>
         /// <param name="Quantity"> Cantidad en KG a cosechar (valor tipo decimal).</param>
-        /// <returns>True si el cultivo debe ser eliminado, false si es perenne.</returns>
         /// <exception cref="KeyNotFoundException">Thrown when the planted crop is not found.</exception>
         /// <exception cref="InvalidOperationException">Thrown when the crop is not ready for harvest.</exception>
-        public bool Harvest(int id, decimal Quantity)
+        public void Harvest(int id, decimal Quantity)
         {
             var plantedCrop = _repository.GetById(id) ?? throw new KeyNotFoundException("PlantedCrop not found");
-            var cropType = _cropTypeRepository.GetById(plantedCrop.CropTypeId);
 
             if (plantedCrop.State != CropStatus.ReadyForHarvest)
                 throw new InvalidOperationException("Crop is not ready for harvest");
@@ -88,15 +86,16 @@ namespace UrbanGarden.Api.Services
                 Quantity = Quantity,
                 Date = DateTime.UtcNow
             });
-
-            if (cropType?.IsPerennial == true)
+            if (plantedCrop.CropType.IsPerennial)
             {
                 plantedCrop.State = CropStatus.Growing;
-                _repository.Update(plantedCrop);
-                return false;
+            }
+            else
+            {
+                plantedCrop.State = CropStatus.Harvested;
             }
 
-            return true;
+            _repository.Update(plantedCrop);
         }
 
         /// <summary>

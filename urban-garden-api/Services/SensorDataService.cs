@@ -29,7 +29,8 @@ namespace UrbanGarden.Api.Services
         {
             ValidateDevice(deviceId);
             var latestData = _sensorDataRepository.GetLatestSoilSensorData(deviceId);
-
+            if (latestData == null)
+                return null;
             return new SoilSensorReadingsDto
             {
                 DeviceID = latestData.DeviceID,
@@ -46,7 +47,8 @@ namespace UrbanGarden.Api.Services
                 throw new ArgumentException("'from' cannot be greater than 'to'");
             }
             var readings = _sensorDataRepository.GetSoilSensorData(deviceId, from, to, limit);
-            
+            if (readings == null)
+                return new List<SoilSensorReadingsDto>();
             return new List<SoilSensorReadingsDto>(readings.Select(r => new SoilSensorReadingsDto
             {
                 DeviceID = r.DeviceID,
@@ -72,6 +74,8 @@ namespace UrbanGarden.Api.Services
         {
             ValidateDevice(deviceId);
             var latestData = _sensorDataRepository.GetLatestTemperatureSensorData(deviceId);
+            if (latestData == null)
+                return null;
             return new TemperatureSensorReadingsDto
             {
                 DeviceID = latestData.DeviceID,
@@ -88,6 +92,8 @@ namespace UrbanGarden.Api.Services
                 throw new ArgumentException("'from' cannot be greater than 'to'");
             }
             var readings = _sensorDataRepository.GetTemperatureSensorData(deviceId, from, to, limit);
+            if (readings == null)
+                return new List<TemperatureSensorReadingsDto>();
             return new List<TemperatureSensorReadingsDto>(readings.Select(r => new TemperatureSensorReadingsDto
             {
                 DeviceID = r.DeviceID,

@@ -59,6 +59,7 @@ namespace UrbanGarden.Api.Controllers
                             Season = c.CropType.Season,
                             IsPerennial = c.CropType.IsPerennial
                         },
+                        State = c.State
                     })
                     .ToList(),
                 Devices = g.Devices
@@ -111,6 +112,7 @@ namespace UrbanGarden.Api.Controllers
                             Season = c.CropType.Season,
                             IsPerennial = c.CropType.IsPerennial
                         },
+                        State = c.State
                     })
                     .ToList(),
                 Devices = gardenPlot.Devices

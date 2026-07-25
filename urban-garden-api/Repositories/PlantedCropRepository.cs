@@ -35,6 +35,7 @@ public class PlantedCropRepository : IPlantedCropRepository
         existing.CropTypeId = plantedCrop.CropTypeId;
         existing.PlantedAt = plantedCrop.PlantedAt;
         existing.State = plantedCrop.State;
+        _context.SaveChanges();
     }
 
     public void Delete(int id)

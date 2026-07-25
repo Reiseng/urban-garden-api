@@ -1,6 +1,7 @@
 using UrbanGarden.Api.Models.Entities;
 using UrbanGarden.Api.Data;
 using Microsoft.EntityFrameworkCore;
+using UrbanGarden.Api.Models.Enums;
 
 namespace UrbanGarden.Api.Repositories
 {
@@ -15,14 +16,18 @@ namespace UrbanGarden.Api.Repositories
 
         public IEnumerable<GardenPlot> GetAll()
         {
-            return _context.GardenPlots.ToList();
+            return _context.GardenPlots
+                .Include(g => g.Devices)
+                .Include(g => g.PlantedCrops . Where(p => p.State != CropStatus.Removed && p.State != CropStatus.Harvested))
+                    .ThenInclude(p => p.CropType)
+                .ToList();
         }
 
         public GardenPlot? GetById(int id)
         {
             return _context.GardenPlots
                 .Include(g => g.Devices)
-                .Include(g => g.PlantedCrops)
+                .Include(g => g.PlantedCrops . Where(p => p.State != CropStatus.Removed && p.State != CropStatus.Harvested))
                 .ThenInclude(p => p.CropType)
                 .FirstOrDefault(g => g.ID == id);
         }

@@ -138,13 +138,7 @@ namespace UrbanGarden.Api.Services
             if (gardenPlot.PlantedCrops == null || targetCrop?.State != CropStatus.ReadyForHarvest)
                 throw new InvalidOperationException("No crop ready to harvest in this garden plot");
 
-            var shouldRemove = _plantedCropService.Harvest(targetCrop!.Id, dto.Quantity);
-            if (shouldRemove)
-            {
-                _plantedCropService.Delete(targetCrop.Id);
-                gardenPlot.PlantedCrops.Remove(targetCrop);
-                _gardenPlotRepository.Update(gardenPlot);
-            }
+            _plantedCropService.Harvest(dto.cropId, dto.Quantity);
         }
 
         /// <summary>
@@ -160,9 +154,8 @@ namespace UrbanGarden.Api.Services
             if (gardenPlot.PlantedCrops == null) throw new InvalidOperationException("No active crop in this garden plot");
             var removeCrop = FindPlantedCrop(gardenPlot, c => c.Id == cropId)
                 ?? throw new InvalidOperationException("Crop not found in this garden plot");
-            _plantedCropService.Delete(removeCrop.Id);
-            gardenPlot.PlantedCrops.Remove(removeCrop);
-            _gardenPlotRepository.Update(gardenPlot);
+            removeCrop.State = CropStatus.Removed;
+            _plantedCropService.Update(removeCrop.Id, CropStatus.Removed);
         }
         /// <summary>
         /// Actualiza el estado del cultivo activo de un huerto.
