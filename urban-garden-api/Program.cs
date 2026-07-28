@@ -64,7 +64,15 @@ builder.Services.AddSingleton<IMqttService, MqttClientService>(provider => new M
 builder.Services.AddScoped<ISensorsService, SensorsService>();
 builder.Services.AddHostedService<MqttHostedService>();
 var app = builder.Build();
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<UrbanGardenDbContext>();
 
+    if (app.Environment.IsProduction())
+    {
+        db.Database.Migrate();
+    }
+}
     app.UseSwagger();
     app.UseSwaggerUI();
 
