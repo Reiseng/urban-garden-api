@@ -28,7 +28,7 @@ builder.Services.AddCors(options =>
         policy =>
         {
             policy
-                .WithOrigins("http://localhost:5173")
+                .WithOrigins("http://localhost:5173","https://urban-garden-frontend.vercel.app")
                 .AllowAnyHeader()
                 .AllowAnyMethod();
         });
