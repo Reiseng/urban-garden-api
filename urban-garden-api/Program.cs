@@ -8,6 +8,9 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 var mqttBrokerIp = builder.Configuration["MQTT:BrokerIP"];
 var mqttBrokerPort = builder.Configuration["MQTT:BrokerPort"];
+var mqttUsername = builder.Configuration["MQTT:Username"];
+var mqttPassword = builder.Configuration["MQTT:Password"];
+
 var deviceRegistrationKey = builder.Configuration["DeviceRegistration:Key"];
 
 builder.WebHost.UseUrls("http://0.0.0.0:8080");
@@ -57,16 +60,14 @@ builder.Services.AddScoped<IDeviceService, DeviceService>(provider => new Device
 builder.Services.AddScoped<ISensorDataService, SensorDataService>();
 
 // MQTT
-builder.Services.AddSingleton<IMqttService, MqttClientService>(provider => new MqttClientService(mqttBrokerIp, mqttBrokerPort)
-);builder.Services.AddScoped<ISensorsService, SensorsService>();
+builder.Services.AddSingleton<IMqttService, MqttClientService>(provider => new MqttClientService(mqttBrokerIp, mqttBrokerPort, mqttUsername, mqttPassword));
+builder.Services.AddScoped<ISensorsService, SensorsService>();
 builder.Services.AddHostedService<MqttHostedService>();
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+
 app.UseHttpsRedirection();
 app.UseCors("ReactFrontend");
 app.UseAuthorization();

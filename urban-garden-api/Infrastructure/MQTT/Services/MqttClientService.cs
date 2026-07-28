@@ -11,15 +11,20 @@ namespace UrbanGarden.Api.Infrastructure.MQTT.Services
 
         public event Func<string, string, Task>? OnMessageReceived;
 
-        public MqttClientService(string? mqttBrokerIp, string? mqttBrokerPort)
+        public MqttClientService(string? mqttBrokerIp, string? mqttBrokerPort, string? username, string? password)
         {
             var factory = new MqttClientFactory();
 
             _client = factory.CreateMqttClient();
 
             _options = new MqttClientOptionsBuilder()
-                .WithTcpServer(mqttBrokerIp, int.TryParse(mqttBrokerPort, out var port) ? port : 1883)
+                .WithTcpServer(mqttBrokerIp, int.Parse(mqttBrokerPort))
                 .WithClientId(Guid.NewGuid().ToString())
+                .WithCredentials(username, password)
+                .WithTlsOptions(o =>
+                {
+                    o.UseTls();
+                })
                 .Build();
 
             _client.ApplicationMessageReceivedAsync += async e =>
