@@ -13,8 +13,6 @@ var mqttPassword = builder.Configuration["MQTT:Password"];
 
 var deviceRegistrationKey = builder.Configuration["DeviceRegistration:Key"];
 
-builder.WebHost.UseUrls("http://0.0.0.0:8080");
-
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
@@ -22,16 +20,14 @@ builder.Services.AddControllers()
     });
 
 builder.Services.AddEndpointsApiExplorer();
-var origins = builder.Configuration
-    .GetSection("AllowedOrigins")
-    .Get<string[]>();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("ReactFrontend",
         policy =>
         {
             policy
-                .WithOrigins(origins!)
+                .WithOrigins(builder.Configuration["FrontendIP"] ?? "http://localhost:5173")
                 .AllowAnyHeader()
                 .AllowAnyMethod();
         });
