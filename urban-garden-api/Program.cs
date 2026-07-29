@@ -22,13 +22,16 @@ builder.Services.AddControllers()
     });
 
 builder.Services.AddEndpointsApiExplorer();
+var origins = builder.Configuration
+    .GetSection("AllowedOrigins")
+    .Get<string[]>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("ReactFrontend",
         policy =>
         {
             policy
-                .WithOrigins(builder.Configuration["FrontendIP"] ?? "localhost:5173")
+                .WithOrigins(origins!)
                 .AllowAnyHeader()
                 .AllowAnyMethod();
         });
@@ -78,6 +81,7 @@ using (var scope = app.Services.CreateScope())
 
 app.UseHttpsRedirection();
 app.UseCors("ReactFrontend");
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
