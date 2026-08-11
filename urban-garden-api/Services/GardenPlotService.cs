@@ -91,7 +91,12 @@ namespace UrbanGarden.Api.Services
         public void Delete(int id)
         {
             var gardenPlot = _gardenPlotRepository.GetById(id) ?? throw new KeyNotFoundException("Garden plot not found");
-            if (gardenPlot.PlantedCrops != null) throw new InvalidOperationException("Remove crop before deleting plot");
+                if (gardenPlot.PlantedCrops.Any())
+                {
+                    throw new InvalidOperationException(
+                        "Remove crop before deleting plot"
+                    );
+                }
             _gardenPlotRepository.Delete(id);
         }
 
