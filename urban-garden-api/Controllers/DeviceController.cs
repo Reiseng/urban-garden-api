@@ -1,6 +1,8 @@
 namespace UrbanGarden.Api.Controllers
 {
     using Microsoft.AspNetCore.Mvc;
+    using UrbanGarden.Api.Infrastructure.MQTT.Dtos;
+    using UrbanGarden.Api.Infrastructure.MQTT.Services;
     using UrbanGarden.Api.Models.Dtos;
     using UrbanGarden.Api.Services;
 
@@ -15,14 +17,17 @@ namespace UrbanGarden.Api.Controllers
     public class DeviceController : ControllerBase
     {
         private readonly IDeviceService _deviceService;
+        private readonly IDeviceServiceMQTT _deviceServiceMQTT;
 
         /// <summary>
         /// Constructor del controlador de dispositivos.
         /// </summary>
         /// <param name="deviceService">Servicio de dispositivos.</param>
-        public DeviceController(IDeviceService deviceService)
+        /// <param name="deviceServiceMQTT">Servicio de MQTT para dispositivos.</param>
+        public DeviceController(IDeviceService deviceService, IDeviceServiceMQTT deviceServiceMQTT)
         {
             _deviceService = deviceService;
+            _deviceServiceMQTT = deviceServiceMQTT;
         }
 
         /// <summary>
@@ -97,13 +102,19 @@ namespace UrbanGarden.Api.Controllers
                 return Unauthorized(ex.Message);
             }
         }
-/*
-        [HttpPost("{id}/config")]
+        [HttpPatch("{id}/config")]
         public IActionResult UpdateDeviceConfig(Guid id, [FromBody] UpdateDeviceDto config)
         {
             try
             {
                 _deviceService.UpdateDeviceConfig(id, config.Config);
+                _deviceServiceMQTT.UpdateDeviceConfiguration(id, new ConfigDto
+                {
+                    SoilSensorCount = config.Config.SoilSensorCount,
+                    TemperatureInterval = config.Config.TemperatureInterval,
+                    SoilMoistureInterval = config.Config.SoilMoistureInterval,
+                    KeepAliveInterval = config.Config.KeepAliveInterval
+                });
                 return NoContent(); // HTTP 204
             }
             catch (ArgumentException ex)
@@ -120,7 +131,12 @@ namespace UrbanGarden.Api.Controllers
         {
             try
             {
-                _deviceService.SendCommandToDevice(id, command);
+                CommandDto commandDto = new CommandDto
+                {
+                    CommandName = command.CommandName,
+                    Parameters = command.Parameters
+                };
+                _deviceServiceMQTT.SendCommandToDeviceAsync(id, commandDto);
                 return Ok();
             }
             catch (ArgumentException ex)
@@ -131,6 +147,6 @@ namespace UrbanGarden.Api.Controllers
             {
                 return NotFound(ex.Message);
             }
-        }*/
+        }
     }
 }

@@ -82,7 +82,6 @@ namespace UrbanGarden.Api.Services
         {
             _repository.Delete(id);
         }
-        /*
         public void UpdateDeviceConfig(Guid deviceId, ConfigDeviceDto config)
         {
             var existing = _repository.GetById(deviceId);
@@ -97,25 +96,6 @@ namespace UrbanGarden.Api.Services
             };
 
             _repository.Update(existing);
-            ConfigDto configDto = new ConfigDto
-            {
-                SoilSensorCount = config.SoilSensorCount,
-                TemperatureInterval = config.TemperatureInterval,
-                SoilMoistureInterval = config.SoilMoistureInterval,
-                KeepAliveInterval = config.KeepAliveInterval
-            };
-            _deviceServiceMQTT.UpdateDeviceConfiguration(existing, configDto);
         }
-        public void SendCommandToDevice(Guid deviceId, CommandDeviceDto command)
-        {
-            var existing = _repository.GetById(deviceId);
-            if (existing == null) return;
-            CommandDto commandDto = new CommandDto
-            {
-                CommandName = command.CommandName,
-                Parameters = command.Parameters
-            };
-            _deviceServiceMQTT.SendCommandToDeviceAsync(existing, commandDto);
-        }*/
     }
 }

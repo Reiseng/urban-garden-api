@@ -54,8 +54,6 @@ namespace UrbanGarden.Api.Services
         /// </summary>
         /// <param name="id">ID del dispositivo a eliminar.</param>
         void Delete(Guid id);
-/*
         void UpdateDeviceConfig(Guid deviceId, ConfigDeviceDto config);
-        void SendCommandToDevice(Guid deviceId, CommandDeviceDto command);*/
     }
 }

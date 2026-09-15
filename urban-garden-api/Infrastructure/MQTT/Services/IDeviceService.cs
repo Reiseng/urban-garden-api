@@ -7,10 +7,10 @@ namespace UrbanGarden.Api.Infrastructure.MQTT.Services
     {
         public Task<Device> GetDeviceById(Guid deviceId);
         public void UpdateLastSeen(Device device, DateTime lastSeen);
-        Task SendCommandToDeviceAsync(Device device, CommandDto command);
+        Task SendCommandToDeviceAsync(Guid deviceId, CommandDto command);
 
         Task UpdateDeviceConfiguration(
-            Device device,
+            Guid deviceId,
             ConfigDto configuration);
     }
 }
