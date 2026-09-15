@@ -31,15 +31,16 @@ namespace UrbanGarden.Api.Infrastructure.MQTT.Services
             _deviceService.UpdateLastSeen(device, lastSeen);
         }
 
-        public async Task SendCommandToDeviceAsync(Device device, CommandDto command)
+        public async Task SendCommandToDeviceAsync(Guid deviceId, CommandDto command)
         {
-            string topic = $"devices/{device.ID}/commands";
+            string topic = $"devices/{deviceId}/commands";
             string payload = System.Text.Json.JsonSerializer.Serialize(command);
             await _mqttService.Publish(topic, payload);
         }
 
-        public async Task UpdateDeviceConfiguration(Device device, ConfigDto configuration)
+        public async Task UpdateDeviceConfiguration(Guid deviceId, ConfigDto configuration)
         {
+            var device = await GetDeviceById(deviceId);
             UpdateDeviceDto deviceDto = new UpdateDeviceDto
             {
 
