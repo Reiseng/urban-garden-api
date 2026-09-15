@@ -18,8 +18,8 @@ namespace UrbanGarden.Api.Data
                 .WithMany(g => g.Devices)
                 .HasForeignKey(d => d.GardenPlotId)
                 .IsRequired(false);
-            //modelBuilder.Entity<Device>()
-            //    .OwnsOne(d => d.Config);
+            modelBuilder.Entity<Device>()
+                .OwnsOne(d => d.Config);
         }
         public DbSet<CropType> CropTypes => Set<CropType>();
         public DbSet<GardenPlot> GardenPlots => Set<GardenPlot>();
