@@ -2,7 +2,6 @@ namespace UrbanGarden.Api.Controllers
 {
     using Microsoft.AspNetCore.Mvc;
     using UrbanGarden.Api.Models.Dtos;
-    using UrbanGarden.Api.Models.Entities;
     using UrbanGarden.Api.Services;
 
     /// <summary>
