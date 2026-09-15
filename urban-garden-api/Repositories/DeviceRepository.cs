@@ -14,16 +14,34 @@ namespace UrbanGarden.Api.Repositories
 
         public IEnumerable<Device> GetAll()
         {
-            return _context.Devices.ToList();
+            Console.WriteLine("1 - Entrando a GetAll");
+
+            var devices = _context.Devices.ToList();
+
+            Console.WriteLine($"2 - Devices encontrados: {devices.Count}");
+
+            return devices;
         }
 
         public Device? GetById(Guid id)
         {
-            return _context.Devices.FirstOrDefault(d => d.ID == id);
+            Console.WriteLine($"1 - GetById: {id}");
+
+            var device = _context.Devices.FirstOrDefault(d => d.ID == id);
+
+            Console.WriteLine($"2 - Resultado: {device != null}");
+
+            return device;
         }
         public Device? GetByMacAddress(string macAddress)
         {
-            return _context.Devices.FirstOrDefault(d => d.MacAddress == macAddress);
+            Console.WriteLine("1 - Entrando a GetByMacAddress");
+
+            var device = _context.Devices.FirstOrDefault(d => d.MacAddress == macAddress);
+
+            Console.WriteLine($"2 - Device encontrado: {device?.ID}");
+
+            return device;
         }
 
         public Device? Add(Device device)
