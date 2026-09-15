@@ -14,10 +14,12 @@ namespace UrbanGarden.Api.Data
             modelBuilder.Entity<GardenPlot>()
                 .OwnsOne(g => g.Location);
             modelBuilder.Entity<Device>()
-            .HasOne(d => d.GardenPlot)
-            .WithMany(g => g.Devices)
-            .HasForeignKey(d => d.GardenPlotId)
-            .IsRequired(false);
+                .HasOne(d => d.GardenPlot)
+                .WithMany(g => g.Devices)
+                .HasForeignKey(d => d.GardenPlotId)
+                .IsRequired(false);
+            modelBuilder.Entity<Device>()
+                .OwnsOne(d => d.Config);
         }
         public DbSet<CropType> CropTypes => Set<CropType>();
         public DbSet<GardenPlot> GardenPlots => Set<GardenPlot>();

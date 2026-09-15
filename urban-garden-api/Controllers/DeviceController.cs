@@ -3,7 +3,6 @@ namespace UrbanGarden.Api.Controllers
     using Microsoft.AspNetCore.Mvc;
     using UrbanGarden.Api.Models.Dtos;
     using UrbanGarden.Api.Models.Entities;
-    using UrbanGarden.Api.Models.Enums;
     using UrbanGarden.Api.Services;
 
     /// <summary>
@@ -97,6 +96,41 @@ namespace UrbanGarden.Api.Controllers
             catch (UnauthorizedAccessException ex)
             {
                 return Unauthorized(ex.Message);
+            }
+        }
+
+        [HttpPost("{id}/config")]
+        public IActionResult UpdateDeviceConfig(Guid id, [FromBody] UpdateDeviceDto config)
+        {
+            try
+            {
+                _deviceService.UpdateDeviceConfig(id, config.Config);
+                return NoContent(); // HTTP 204
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+        [HttpPost("{id}/command")]
+        public IActionResult SendCommand(Guid id, [FromBody] CommandDeviceDto command)
+        {
+            try
+            {
+                _deviceService.SendCommandToDevice(id, command);
+                return Ok();
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
             }
         }
     }

@@ -9,5 +9,10 @@ namespace UrbanGarden.Api.Models.Dtos
         /// Nombre del dispositivo.
         /// </summary>
         public string Name { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Configuración del dispositivo.
+        /// </summary>
+        public ConfigDeviceDto Config { get; set; } = new ConfigDeviceDto();
     }
 }

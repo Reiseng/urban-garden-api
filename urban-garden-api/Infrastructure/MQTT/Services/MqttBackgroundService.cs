@@ -28,6 +28,23 @@ public class MqttHostedService : BackgroundService
                 await _sensorsService.ProcessTemperatureSensorData(topic, payload);
                 return;
             }
+            if (topic.EndsWith("/heartbeat"))
+            {
+                var _deviceService = scope.ServiceProvider.GetRequiredService<IDeviceServiceMQTT>();
+                var parts = topic.Split('/');
+                if (parts.Length < 2)
+                    return;
+
+                if (!Guid.TryParse(parts[1], out var deviceId))
+                    return;
+
+                var device = await _deviceService.GetDeviceById(deviceId);
+                if (device == null)
+                    return;
+
+                _deviceService.UpdateLastSeen(device, DateTime.UtcNow);
+                return;
+            }
             await Task.CompletedTask;
         };
 
@@ -35,6 +52,7 @@ public class MqttHostedService : BackgroundService
 
         await _mqttService.Subscribe("devices/+/sensors/soil");
         await _mqttService.Subscribe("devices/+/sensors/temperature");
+        await _mqttService.Subscribe("devices/+/heartbeat");
 
         await Task.Delay(Timeout.Infinite, stoppingToken);
     }

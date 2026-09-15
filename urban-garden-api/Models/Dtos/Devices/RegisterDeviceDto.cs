@@ -24,5 +24,6 @@ public class RegisterDeviceDto
         [Required(ErrorMessage = "Registration Key is required")]
         [StringLength(100, MinimumLength = 1, ErrorMessage = "Registration Key must be between 1 and 100 characters")]
         public string RegistrationKey { get; set; } = null!;
+
     }
 }

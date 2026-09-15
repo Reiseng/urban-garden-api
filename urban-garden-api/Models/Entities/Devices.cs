@@ -14,5 +14,6 @@ namespace UrbanGarden.Api.Models.Entities
             = new List<SoilSensorReadings>();
         public ICollection<TemperatureSensorReadings> TemperatureReadings { get; set; }
             = new List<TemperatureSensorReadings>();
+        public ConfigDevice Config { get; set; } = new ConfigDevice();
     }
 }

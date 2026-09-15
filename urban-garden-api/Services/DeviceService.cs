@@ -2,6 +2,8 @@ using UrbanGarden.Api.Models.Entities;
 using UrbanGarden.Api.Models.Dtos;
 using UrbanGarden.Api.Repositories;
 using UrbanGarden.Api.Infrastructure;
+using UrbanGarden.Api.Infrastructure.MQTT.Services;
+using UrbanGarden.Api.Infrastructure.MQTT.Dtos;
 
 namespace UrbanGarden.Api.Services
 {
@@ -12,11 +14,13 @@ namespace UrbanGarden.Api.Services
     {
         private readonly IDeviceRepository _repository;
         private readonly string? _deviceRegistrationKey;
+        private readonly IDeviceServiceMQTT _deviceServiceMQTT;
 
-        public DeviceService(IDeviceRepository repository, string? deviceRegistrationKey)
+        public DeviceService(IDeviceRepository repository, string? deviceRegistrationKey, IDeviceServiceMQTT deviceServiceMQTT)
         {
             _repository = repository;
             _deviceRegistrationKey = deviceRegistrationKey;
+            _deviceServiceMQTT = deviceServiceMQTT;
         }
 
         public IEnumerable<Device> GetAll()
@@ -79,6 +83,40 @@ namespace UrbanGarden.Api.Services
         public void Delete(Guid id)
         {
             _repository.Delete(id);
+        }
+        public void UpdateDeviceConfig(Guid deviceId, ConfigDeviceDto config)
+        {
+            var existing = _repository.GetById(deviceId);
+            if (existing == null) return;
+
+            existing.Config = new ConfigDevice
+            {
+                SoilSensorCount = config.SoilSensorCount,
+                TemperatureInterval = config.TemperatureInterval,
+                SoilMoistureInterval = config.SoilMoistureInterval,
+                KeepAliveInterval = config.KeepAliveInterval
+            };
+
+            _repository.Update(existing);
+            ConfigDto configDto = new ConfigDto
+            {
+                SoilSensorCount = config.SoilSensorCount,
+                TemperatureInterval = config.TemperatureInterval,
+                SoilMoistureInterval = config.SoilMoistureInterval,
+                KeepAliveInterval = config.KeepAliveInterval
+            };
+            _deviceServiceMQTT.UpdateDeviceConfiguration(existing, configDto);
+        }
+        public void SendCommandToDevice(Guid deviceId, CommandDeviceDto command)
+        {
+            var existing = _repository.GetById(deviceId);
+            if (existing == null) return;
+            CommandDto commandDto = new CommandDto
+            {
+                CommandName = command.CommandName,
+                Parameters = command.Parameters
+            };
+            _deviceServiceMQTT.SendCommandToDeviceAsync(existing, commandDto);
         }
     }
 }

@@ -1,3 +1,5 @@
+using UrbanGarden.Api.Infrastructure.MQTT.Dtos;
+
 namespace UrbanGarden.Api.Models.Dtos
 {
 public class CreateDeviceDto
@@ -10,5 +12,9 @@ public class CreateDeviceDto
         /// Clave API del dispositivo.
         /// </summary>
         public string ApiKey { get; set; } = null!;
+        /// <summary>
+        /// Configuración del dispositivo.
+        /// </summary>
+        public ConfigDeviceDto Config { get; set; } = new ConfigDeviceDto();
     }
 }

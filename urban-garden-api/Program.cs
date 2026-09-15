@@ -55,12 +55,16 @@ builder.Services.AddScoped<ICropTypeService, CropTypeService>();
 builder.Services.AddScoped<IGardenPlotService, GardenPlotService>();
 builder.Services.AddScoped<IPlantedCropService, PlantedCropService>();
 builder.Services.AddScoped<IHarvestService, HarvestService>();
-builder.Services.AddScoped<IDeviceService, DeviceService>(provider => new DeviceService(provider.GetRequiredService<IDeviceRepository>(), deviceRegistrationKey));
+builder.Services.AddScoped<IDeviceService, DeviceService>(provider => new DeviceService(
+                                                            provider.GetRequiredService<IDeviceRepository>(), 
+                                                            deviceRegistrationKey, 
+                                                            provider.GetRequiredService<IDeviceServiceMQTT>()));
 builder.Services.AddScoped<ISensorDataService, SensorDataService>();
 
 // MQTT
 builder.Services.AddSingleton<IMqttService, MqttClientService>(provider => new MqttClientService(mqttBrokerIp, mqttBrokerPort, mqttUsername, mqttPassword));
 builder.Services.AddScoped<ISensorsService, SensorsService>();
+builder.Services.AddScoped<IDeviceServiceMQTT, DeviceServiceMQTT>();
 builder.Services.AddHostedService<MqttHostedService>();
 var app = builder.Build();
 using (var scope = app.Services.CreateScope())
