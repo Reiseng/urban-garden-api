@@ -97,7 +97,7 @@ namespace UrbanGarden.Api.Controllers
                 return Unauthorized(ex.Message);
             }
         }
-
+/*
         [HttpPost("{id}/config")]
         public IActionResult UpdateDeviceConfig(Guid id, [FromBody] UpdateDeviceDto config)
         {
@@ -131,6 +131,6 @@ namespace UrbanGarden.Api.Controllers
             {
                 return NotFound(ex.Message);
             }
-        }
+        }*/
     }
 }

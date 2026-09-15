@@ -14,13 +14,11 @@ namespace UrbanGarden.Api.Services
     {
         private readonly IDeviceRepository _repository;
         private readonly string? _deviceRegistrationKey;
-        private readonly IDeviceServiceMQTT _deviceServiceMQTT;
 
-        public DeviceService(IDeviceRepository repository, string? deviceRegistrationKey, IDeviceServiceMQTT deviceServiceMQTT)
+        public DeviceService(IDeviceRepository repository, string? deviceRegistrationKey)
         {
             _repository = repository;
             _deviceRegistrationKey = deviceRegistrationKey;
-            _deviceServiceMQTT = deviceServiceMQTT;
         }
 
         public IEnumerable<Device> GetAll()
@@ -84,6 +82,7 @@ namespace UrbanGarden.Api.Services
         {
             _repository.Delete(id);
         }
+        /*
         public void UpdateDeviceConfig(Guid deviceId, ConfigDeviceDto config)
         {
             var existing = _repository.GetById(deviceId);
@@ -117,6 +116,6 @@ namespace UrbanGarden.Api.Services
                 Parameters = command.Parameters
             };
             _deviceServiceMQTT.SendCommandToDeviceAsync(existing, commandDto);
-        }
+        }*/
     }
 }
