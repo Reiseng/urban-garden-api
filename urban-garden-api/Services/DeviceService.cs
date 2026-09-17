@@ -50,7 +50,13 @@ namespace UrbanGarden.Api.Services
             var existingDevice = _repository.GetByMacAddress(device.MacAddress);
             if (existingDevice != null)
             {
-                return new CreateDeviceDto { ApiKey = existingDevice.ApiKey, ID = existingDevice.ID };
+                return new CreateDeviceDto { ApiKey = existingDevice.ApiKey, ID = existingDevice.ID, Config = new ConfigDeviceDto
+                {
+                    SoilSensorCount = existingDevice.Config.SoilSensorCount,
+                    TemperatureInterval = existingDevice.Config.TemperatureInterval,
+                    SoilMoistureInterval = existingDevice.Config.SoilMoistureInterval,
+                    KeepAliveInterval = existingDevice.Config.KeepAliveInterval
+                } };
             }
             var newDevice = new Device
             {
