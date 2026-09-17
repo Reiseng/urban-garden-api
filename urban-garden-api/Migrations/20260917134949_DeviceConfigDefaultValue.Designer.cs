@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using UrbanGarden.Api.Data;
@@ -11,9 +12,11 @@ using UrbanGarden.Api.Data;
 namespace urban_garden_api.Migrations
 {
     [DbContext(typeof(UrbanGardenDbContext))]
-    partial class UrbanGardenDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260917134949_DeviceConfigDefaultValue")]
+    partial class DeviceConfigDefaultValue
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
